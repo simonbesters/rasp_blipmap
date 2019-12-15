@@ -2,5 +2,5 @@ geog.tar.gz
 rangs.tgz
 rasp.tar.gz
 stable.tar.gz
-id_rsa
-id_rsa.pub
+ssh_key
+ssh_key.pub
