@@ -18,9 +18,16 @@ Create ssh keys for uploading results to webserver:
 
 Run:
 ```
-docker run -f Dockerfile TODO: set environment variables such as upload host, keyfile for  etc. 
+docker-compose docker-compose.yml
 ```
 
-Current know issues:
-- not sure where to put the binaries
-- cannot download the rasp-gm binaries (gives 404)
+After that, the images can be served by https://github.com/dingetje/RASPViewer
+
+Goals:
+  - Ensure that everyone can have a running local setup in a few minutes, including webserver (good setup instructions)
+  - Put binary files / non-used config files in docker.blipmaps.nl
+    - Create OSM sync script (download OSM & put that on docker.blipmaps.nl)
+  - Put config files in Gitlab 
+  - Webserver should have region defined in subdirectories
+  - Ensure the NCL scripts are copied / stripped of superfluous data
+  
