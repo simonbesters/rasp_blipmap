@@ -45,6 +45,7 @@ WORKDIR /root/
 
 # Download and unpack static geographical data directory
 # Assuming you already downloaded this file
+# See http://www2.mmm.ucar.edu/wrf/users/download/get_sources_wps_geog.html
 # ADD https://www.dropbox.com/sh/n25p0nz6bgvjzlb/AABfOgE6bbOVBJjZgYWoHyfma/geog.tar.gz $BASEDIR
 COPY geog.tar.gz $BASEDIR
 RUN cd $BASEDIR \
@@ -54,12 +55,10 @@ RUN ls $BASEDIR
 
 # Download and unpack raspGM
 # Assuming you already downloaded this file
-# ADD https://github.com/wargoth/rasp-gm/archive/stable.tar.gz $BASEDIR
-COPY stable.tar.gz $BASEDIR
+COPY rasp-gm-stable.tar.gz $BASEDIR
 RUN cd $BASEDIR \
-  && tar xf stable.tar.gz --strip-components=1 \
-  && rm stable.tar.gz \
-  && rm -rf $BASEDIR/PANOCHE
+  && tar xf rasp-gm-stable.tar.gz --strip-components=1 \
+  && rm rasp-gm-stable.tar.gz
 RUN ls $BASEDIR
 
 # Download and unpack detailed coastlines and lakes directory
@@ -93,17 +92,18 @@ RUN ls $BASEDIR/NETHERLANDS
 # Change in ftp2u_subregion.pl "\&dir=\%2Fgfs.$curdate$runTime" into "\&dir=\%2Fgfs.$curdate/$runTime" was already applied
 RUN sed -i 's/gfs.%04d%02d%02d%02d/gfs.%04d%02d%02d\/%02d/' $BASEDIR/bin/GM-master.pl
 
-#COPY $BASEDIR/NETHERLANDS/wrfsi.nl $BASEDIR/NETHERLANDS/rasp.run.parameters.NETHERLANDS $BASEDIR/NETHERLANDS/
-RUN cp -a $BASEDIR/NETHERLANDS/rasp.region_data.ncl $BASEDIR/GM/
-RUN cp -a $BASEDIR/NETHERLANDS/rasp.site.runenvironment $BASEDIR/
-RUN cp -a $BASEDIR/NETHERLANDS/calc_funcs.ncl $BASEDIR/GM/
-RUN cp -a $BASEDIR/NETHERLANDS/plot_funcs.ncl $BASEDIR/GM/
-RUN cp -a $BASEDIR/NETHERLANDS/rasp.site_load.pressure-level.ncl $BASEDIR/GM/
-RUN cp -a $BASEDIR/NETHERLANDS/rasp.site_load.xbl.ncl $BASEDIR/GM/
-RUN cp -a $BASEDIR/NETHERLANDS/pfd.rgb $BASEDIR/GM/
-RUN cp -a $BASEDIR/NETHERLANDS/press26.rgb $BASEDIR/GM/
+# Prepare NETHERLANDS region
 RUN cp -a $BASEDIR/region.TEMPLATE/. $BASEDIR/NETHERLANDS/
+RUN ls $BASEDIR
 RUN ls $BASEDIR/NETHERLANDS
+
+# Assuming you already downloaded this file
+COPY rasp-gm-NETHERLANDS.tar.gz $BASEDIR
+RUN cd $BASEDIR \
+  && tar xf rasp-gm-NETHERLANDS.tar.gz --strip-components=1 \
+  && rm rasp-gm-NETHERLANDS.tar.gz
+RUN ls $BASEDIR
+RUN ls $BASEDIR/GM
 
 ENV PATH="${BASEDIR}/bin:${PATH}"
 
@@ -119,5 +119,11 @@ WORKDIR /root/rasp/
 
 VOLUME ["/root/rasp/NETHERLANDS/OUT/", "/root/rasp/NETHERLANDS/LOG/"]
 
-#CMD ["bash"]
-#CMD ["runGM", "NETHERLANDS"]
+CMD ["runGM", "NETHERLANDS"]
+
+#sudo docker build -t netherlands .
+#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=0 netherlands
+#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=1 netherlands
+#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=2 netherlands
+#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=3 netherlands
+#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=4 netherlands
