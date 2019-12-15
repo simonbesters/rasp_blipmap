@@ -54,11 +54,11 @@ RUN ls $BASEDIR
 
 # Download and unpack raspGM
 # Assuming you already downloaded this file
-# ADD https://github.com/wargoth/rasp-gm/archive/rasp-gm-stable.tar.gz $BASEDIR
-COPY rasp-gm-stable.tar.gz $BASEDIR
+# ADD https://github.com/wargoth/rasp-gm/archive/stable.tar.gz $BASEDIR
+COPY stable.tar.gz $BASEDIR
 RUN cd $BASEDIR \
-  && tar xf rasp-gm-stable.tar.gz --strip-components=1 \
-  && rm rasp-gm-stable.tar.gz \
+  && tar xf stable.tar.gz --strip-components=1 \
+  && rm stable.tar.gz \
   && rm -rf $BASEDIR/PANOCHE
 RUN ls $BASEDIR
 
