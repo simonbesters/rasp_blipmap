@@ -31,3 +31,6 @@ Goals:
   - Webserver should have region defined in subdirectories
   - Ensure the NCL scripts are copied / stripped of superfluous data
   
+Extra goals:
+  - Have dinner together
+
