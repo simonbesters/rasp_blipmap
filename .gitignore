@@ -1,9 +1,4 @@
-geog.tar.gz
-rangs.tgz
-rasp.tar.gz
-stable.tar.gz
-NETHERLANDS.tar.gz
-rasp-gm-NETHERLANDS.tar.gz
-rasp-gm-stable.tar.gz
+*.tar.gz
+*.tgz
 ssh_key
 ssh_key.pub

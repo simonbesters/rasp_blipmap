@@ -1,4 +1,4 @@
-# sudo docker build -t netherlands .
+# sudo docker build -t nl1km .
 FROM fedora:25
 
 ENV BASEDIR=/root/rasp/
@@ -53,10 +53,10 @@ RUN cd $BASEDIR \
   && rm geog.tar.gz
 RUN ls $BASEDIR
 
-COPY geog.fine.tar.gz $BASEDIR
+COPY geog+.tar.gz $BASEDIR
 RUN cd $BASEDIR \
-  && tar xf geog.fine.tar.gz \
-  && rm geog.fine.tar.gz
+  && tar xf geog+.tar.gz \
+  && rm geog+.tar.gz
 RUN ls $BASEDIR
 
 # Download and unpack raspGM
@@ -85,35 +85,18 @@ RUN echo export BASEDIR=$BASEDIR >> /etc/bashrc \
 # cleanup 
 RUN yum clean all
 
-# Download and unpack NETHERLANDS directory
-# Assuming you already downloaded this file
-COPY NETHERLANDS.tar.gz $BASEDIR
-RUN cd $BASEDIR \
-  && tar xf NETHERLANDS.tar.gz \
-  && rm NETHERLANDS.tar.gz
-RUN ls $BASEDIR
-RUN ls $BASEDIR/NETHERLANDS
-
 # Download and unpack NL1KM directory
 # Assuming you already downloaded this file
-COPY NL1KM-1.tar.gz $BASEDIR
+COPY NL1KM.tar.gz $BASEDIR
 RUN cd $BASEDIR \
-  && tar xf NL1KM-1.tar.gz \
-  && rm NL1KM-1.tar.gz
+  && tar xf NL1KM.tar.gz \
+  && rm NL1KM.tar.gz
 RUN ls $BASEDIR
 RUN ls $BASEDIR/NL1KM
-
-# Overwrite the existing rasp.run.parameters.NETHERLANDS file (should go to git)
-COPY rasp.run.parameters.NETHERLANDS $BASEDIR/NETHERLANDS
 
 # Change download links to new format
 # Change in ftp2u_subregion.pl "\&dir=\%2Fgfs.$curdate$runTime" into "\&dir=\%2Fgfs.$curdate/$runTime" was already applied
 RUN sed -i 's/gfs.%04d%02d%02d%02d/gfs.%04d%02d%02d\/%02d/' $BASEDIR/bin/GM-master.pl
-
-# Prepare NETHERLANDS region
-RUN cp -a $BASEDIR/region.TEMPLATE/. $BASEDIR/NETHERLANDS/
-RUN ls $BASEDIR
-RUN ls $BASEDIR/NETHERLANDS
 
 # Prepare NL1KM region
 RUN cp -a $BASEDIR/region.TEMPLATE/. $BASEDIR/NL1KM/
@@ -131,29 +114,21 @@ RUN ls $BASEDIR/GM
 ENV PATH="${BASEDIR}/bin:${PATH}"
 
 # initialize
-RUN cd $BASEDIR/NETHERLANDS/ \
-  && wrfsi2wps.pl \
-  && wps2input.pl \
-  && geogrid.exe
-
-# initialize part 1
 RUN cd $BASEDIR/NL1KM/ \
   && wrfsi2wps.pl \
   && wps2input.pl
 
 # Download and unpack NL1KM+ directory
 # Assuming you already downloaded this file
-COPY NL1KM-2.tar.gz $BASEDIR
+COPY NL1KM+.tar.gz $BASEDIR
 RUN cd $BASEDIR \
-  && tar xf NL1KM-2.tar.gz \
-  && rm NL1KM-2.tar.gz
+  && tar xf NL1KM+.tar.gz \
+  && rm NL1KM+.tar.gz
 RUN ls $BASEDIR
 RUN ls $BASEDIR/NL1KM
 RUN ls $BASEDIR/RUN.TABLES
 
-COPY rasp.run.parameters.NETHERLANDS $BASEDIR/NL1KM
-
-# initialize part 2
+# initialize
 RUN cd $BASEDIR/NL1KM/ \
   && geogrid.exe
 
@@ -161,22 +136,10 @@ RUN rm -rf $BASEDIR/geog
 
 WORKDIR /root/rasp/
 
-VOLUME ["/root/rasp/NETHERLANDS/OUT/", "/root/rasp/NETHERLANDS/LOG/","/root/rasp/NL1KM/OUT/", "/root/rasp/NL1KM/LOG/"]
+VOLUME ["/root/rasp/NL1KM/OUT/", "/root/rasp/NL1KM/LOG/"]
 
-ENTRYPOINT ["runGM"]
-CMD ["NETHERLANDS"]
+CMD ["runGM", "N1KM"]
 
-#sudo docker build -t netherlands .
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=0 netherlands
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=1 netherlands
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=2 netherlands
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=3 netherlands
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=4 netherlands
-
-#VOLUME ["/root/rasp/NL1KM/OUT/", "/root/rasp/NL1KM/LOG/"]
-#
-#CMD ["runGM", "N1KM"]
-#
 #sudo docker build -t nl1km .
 #docker run -v /tmp/OUT:/root/rasp/NL1KM/OUT/ -v /tmp/LOG:/root/rasp/NL1KM/LOG/ --rm -e START_DAY=0 nl1km
 #docker run -v /tmp/OUT:/root/rasp/NL1KM/OUT/ -v /tmp/LOG:/root/rasp/NL1KM/LOG/ --rm -e START_DAY=1 nl1km
