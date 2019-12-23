@@ -1,4 +1,4 @@
-# sudo docker build -t netherlands .
+# sudo docker build -t blipmaps.nl/netherlands:latest .
 FROM fedora:25
 
 ENV BASEDIR=/root/rasp/
@@ -166,18 +166,12 @@ VOLUME ["/root/rasp/NETHERLANDS/OUT/", "/root/rasp/NETHERLANDS/LOG/","/root/rasp
 ENTRYPOINT ["runGM"]
 CMD ["NETHERLANDS"]
 
-#sudo docker build -t netherlands .
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=0 netherlands
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=1 netherlands
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=2 netherlands
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=3 netherlands
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=4 netherlands
+#sudo docker build -t blipmaps.nl/combined:latest .
+#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=0 blipmaps.nl/combined:latest
+#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=1 blipmaps.nl/combined:latest
+#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=2 blipmaps.nl/combined:latest
+#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=3 blipmaps.nl/combined:latest
+#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=4 blipmaps.nl/combined:latest
 
-#VOLUME ["/root/rasp/NL1KM/OUT/", "/root/rasp/NL1KM/LOG/"]
-#
-#CMD ["runGM", "N1KM"]
-#
-#sudo docker build -t nl1km .
-#docker run -v /tmp/OUT:/root/rasp/NL1KM/OUT/ -v /tmp/LOG:/root/rasp/NL1KM/LOG/ --rm -e START_DAY=0 nl1km
-#docker run -v /tmp/OUT:/root/rasp/NL1KM/OUT/ -v /tmp/LOG:/root/rasp/NL1KM/LOG/ --rm -e START_DAY=1 nl1km
-#docker run -v /tmp/OUT:/root/rasp/NL1KM/OUT/ -v /tmp/LOG:/root/rasp/NL1KM/LOG/ --rm -e START_DAY=2 nl1km
+#docker run -v /tmp/OUT:/root/rasp/NL1KM/OUT/ -v /tmp/LOG:/root/rasp/NL1KM/LOG/ --rm -e START_DAY=0 blipmaps.nl/combined:latest nl1km
+
