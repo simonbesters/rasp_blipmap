@@ -105,6 +105,7 @@ RUN ls $BASEDIR/NL1KM
 
 # Overwrite the existing rasp.run.parameters.NETHERLANDS file (should go to git)
 COPY rasp.run.parameters.NETHERLANDS $BASEDIR/NETHERLANDS
+COPY rasp.run.parameters.NL1KM $BASEDIR/NL1KM
 
 # Change download links to new format
 # Change in ftp2u_subregion.pl "\&dir=\%2Fgfs.$curdate$runTime" into "\&dir=\%2Fgfs.$curdate/$runTime" was already applied
@@ -150,8 +151,6 @@ RUN cd $BASEDIR \
 RUN ls $BASEDIR
 RUN ls $BASEDIR/NL1KM
 RUN ls $BASEDIR/RUN.TABLES
-
-COPY rasp.run.parameters.NETHERLANDS $BASEDIR/NL1KM
 
 # initialize part 2
 RUN cd $BASEDIR/NL1KM/ \
