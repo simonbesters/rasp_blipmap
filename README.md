@@ -33,5 +33,7 @@ Goals:
   
 Extra goals:
   - Have dinner together
+  - Add XCSoar support
+  - Get XBL plots working
 
 asdf
