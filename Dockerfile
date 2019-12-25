@@ -1,8 +1,10 @@
-# sudo docker build -t blipmaps.nl/netherlands:latest .
+# sudo docker build -t blipmaps.nl/combined:latest --build-arg ssh_prv_key="$(cat ~/.ssh/id_ed25519)" --build-arg ssh_pub_key="$(cat ~/.ssh/id_ed25519.pub)" --build-arg ssh_known_hosts="$(cat ~/.ssh/known_hosts)" .
+
 FROM fedora:25
 
+#Basic environment
 ENV BASEDIR=/root/rasp/
-
+ENV TZ=Europe/Amsterdam
 RUN mkdir $BASEDIR
 
 # required packages
@@ -27,7 +29,8 @@ RUN dnf update -y && dnf install -y \
   patch \
   vim \
   less \
-  bzip2
+  bzip2 \
+  openssh-clients
   
 # configure CPAN and install required modules
 RUN (echo y;echo o conf prerequisites_policy follow;echo o conf commit) | cpan \
@@ -162,15 +165,33 @@ WORKDIR /root/rasp/
 
 VOLUME ["/root/rasp/NETHERLANDS/OUT/", "/root/rasp/NETHERLANDS/LOG/","/root/rasp/NL1KM/OUT/", "/root/rasp/NL1KM/LOG/"]
 
-ENTRYPOINT ["runGM"]
+COPY runRasp.sh ${BASEDIR}/bin
+COPY convertImages.sh ${BASEDIR}/bin
+
+#Add ssh keys to upload to $targetUrl location
+ARG ssh_prv_key
+ARG ssh_pub_key
+ARG ssh_known_hosts
+RUN mkdir -p /root/.ssh && \
+    chmod 0700 /root/.ssh
+RUN echo "$ssh_prv_key" > /root/.ssh/id_rsa && \
+    echo "$ssh_pub_key" > /root/.ssh/id_rsa.pub && \
+    echo "$ssh_known_hosts" > /root/.ssh/known_hosts && \
+    chmod 600 /root/.ssh/id_rsa && \
+    chmod 600 /root/.ssh/id_rsa.pub && \
+    chmod 600 /root/.ssh/known_hosts
+
+# The runRasp.sh script is called with 1 argument: The area it is running
+ENTRYPOINT ["runRasp.sh"]
 CMD ["NETHERLANDS"]
 
-#sudo docker build -t blipmaps.nl/combined:latest .
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=0 blipmaps.nl/combined:latest
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=1 blipmaps.nl/combined:latest
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=2 blipmaps.nl/combined:latest
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=3 blipmaps.nl/combined:latest
-#docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=4 blipmaps.nl/combined:latest
 
-#docker run -v /tmp/OUT:/root/rasp/NL1KM/OUT/ -v /tmp/LOG:/root/rasp/NL1KM/LOG/ --rm -e START_DAY=0 blipmaps.nl/combined:latest nl1km
+# sudo docker build -t blipmaps.nl/combined:latest --build-arg ssh_prv_key="$(cat ~/.ssh/id_ed25519)" --build-arg ssh_pub_key="$(cat ~/.ssh/id_ed25519.pub)" --build-arg ssh_known_hosts="$(cat ~/.ssh/known_hosts)" .
+# docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=0 blipmaps.nl/combined:latest
+# docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=1 blipmaps.nl/combined:latest
+# docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=2 blipmaps.nl/combined:latest
+# docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=3 blipmaps.nl/combined:latest
+# docker run -v /tmp/OUT:/root/rasp/NETHERLANDS/OUT/ -v /tmp/LOG:/root/rasp/NETHERLANDS/LOG/ --rm -e START_DAY=4 -e targetUrl=user@host:/home/some/upload/directory blipmaps.nl/combined:latest
+
+# docker run -v /tmp/OUT:/root/rasp/NL1KM/OUT/ -v /tmp/LOG:/root/rasp/NL1KM/LOG/ --rm -e START_DAY=0 blipmaps.nl/combined:latest nl1km
 
