@@ -10,8 +10,9 @@ git clone git@gitlab.com:DavidRasp/blipmaps.nl.git
 cd blipmaps.nl
 ./download_binaries.sh
 ```
-Create two directories to see the results:
+Build image and create two directories to see the results:
 ```
+docker-compose -f docker-compose.yml build netherlands0  #only need to do this once
 mkdir /tmp/OUT && mkdir /tmp/LOG
 ```
 
