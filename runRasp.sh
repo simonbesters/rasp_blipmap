@@ -9,11 +9,19 @@ if [ $# -ne 1 ] ; then
     exit 1;
 fi
 region=${1}
+if [ -z "${START_DAY}" ] ; then
+    START_DAY=0;
+fi
 
 # If you call docker run with a target url, e.g. like the one below, it wil upload them in a subdirectory of this location
 #targetUrl="user@host:/home/user/domains/domainname/public_html/images/"
 
 startDate=$(date);
+
+########################################################3
+# cleanup of images that may be mounted
+echo "Removing previous images so current run is not contaminated"
+rm -rf /root/rasp/${region}/OUT/*
 
 ########################################################3
 #Generate the region
@@ -28,16 +36,12 @@ convertImages.sh ${region}
 ########################################################3
 #Upload images
 if [ ! -z "${targetUrl}" ] ; then
-    #Determine final upload location
-    if [ -z "${START_DAY}" ] ; then
-	START_DAY=0;
-    fi
     finalTargetUrl="${targetUrl}/${region}.${START_DAY}"
 
     #Upload files
     echo "uploading images to ${finalTargetUrl} for ${region}"
-    scp /root/rasp/${region}/OUT/*.data ${finalTargetUrl}
-    scp /root/rasp/${region}/OUT/*.png ${finalTargetUrl}
+    scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.data ${finalTargetUrl}
+    scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.png ${finalTargetUrl}
 else
     echo "NOT uploading, targetUrl not set"
 fi

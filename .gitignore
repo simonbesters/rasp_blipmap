@@ -2,3 +2,4 @@
 *.tgz
 ssh_key
 ssh_key.pub
+.env
