@@ -42,6 +42,7 @@ if [ ! -z "${targetUrl}" ] ; then
     echo "uploading images to ${finalTargetUrl} for ${region}"
     scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.data ${finalTargetUrl}
     scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.png ${finalTargetUrl}
+    scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.gif ${finalTargetUrl}
 else
     echo "NOT uploading, targetUrl not set"
 fi
