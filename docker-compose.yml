@@ -1,80 +1,80 @@
 version: '3.7'
 
 services:
-#  netherlands0:
-#    image: blipmaps.nl/combined:latest
-#    build: .
-#    volumes:
-#      - /tmp/OUT:/root/rasp/NETHERLANDS/OUT
-#      - /tmp/LOG:/root/rasp/NETHERLANDS/LOG
-#    environment:
-#      - START_DAY=0
-#      - targetUrl=${targetUrl:-}
-#    command: [ "NETHERLANDS" ]
-#    secrets:
-#      - host_ssh_key
-#      - host_ssh_pub_key
-#      - host_ssh_known_hosts
-#
-#  netherlands1:
-#    image: blipmaps.nl/combined:latest
-#    build: .
-#    volumes:
-#      - /tmp/OUT:/root/rasp/NETHERLANDS/OUT
-#      - /tmp/LOG:/root/rasp/NETHERLANDS/LOG
-#    environment:
-#      - START_DAY=1
-#      - targetUrl=${targetUrl:-}
-#    command: [ "NETHERLANDS" ]
-#    secrets:
-#      - host_ssh_key
-#      - host_ssh_pub_key
-#      - host_ssh_known_hosts
-#
-#  netherlands2:
-#    image: blipmaps.nl/combined:latest
-#    build: .
-#    volumes:
-#      - /tmp/OUT:/root/rasp/NETHERLANDS/OUT
-#      - /tmp/LOG:/root/rasp/NETHERLANDS/LOG
-#    environment:
-#      - START_DAY=2
-#      - targetUrl=${targetUrl:-}
-#    command: [ "NETHERLANDS" ]
-#    secrets:
-#      - host_ssh_key
-#      - host_ssh_pub_key
-#      - host_ssh_known_hosts
-#
-#  netherlands3:
-#    image: blipmaps.nl/combined:latest
-#    build: .
-#    volumes:
-#      - /tmp/OUT:/root/rasp/NETHERLANDS/OUT
-#      - /tmp/LOG:/root/rasp/NETHERLANDS/LOG
-#    environment:
-#      - START_DAY=3
-#      - targetUrl=${targetUrl:-}
-#    command: [ "NETHERLANDS" ]
-#    secrets:
-#      - host_ssh_key
-#      - host_ssh_pub_key
-#      - host_ssh_known_hosts
-#
-#  netherlands4:
-#    image: blipmaps.nl/combined:latest
-#    build: .
-#    volumes:
-#      - /tmp/OUT:/root/rasp/NETHERLANDS/OUT
-#      - /tmp/LOG:/root/rasp/NETHERLANDS/LOG
-#    environment:
-#      - START_DAY=4
-#      - targetUrl=${targetUrl:-}
-#    command: [ "NETHERLANDS" ]
-#    secrets:
-#      - host_ssh_key
-#      - host_ssh_pub_key
-#      - host_ssh_known_hosts
+  netherlands0:
+    image: blipmaps.nl/combined:latest
+    build: .
+    volumes:
+      - /tmp/OUT:/root/rasp/NETHERLANDS/OUT
+      - /tmp/LOG:/root/rasp/NETHERLANDS/LOG
+    environment:
+      - START_DAY=0
+      - targetUrl=${targetUrl:-}
+    command: [ "NETHERLANDS" ]
+    secrets:
+      - host_ssh_key
+      - host_ssh_pub_key
+      - host_ssh_known_hosts
+
+  netherlands1:
+    image: blipmaps.nl/combined:latest
+    build: .
+    volumes:
+      - /tmp/OUT:/root/rasp/NETHERLANDS/OUT
+      - /tmp/LOG:/root/rasp/NETHERLANDS/LOG
+    environment:
+      - START_DAY=1
+      - targetUrl=${targetUrl:-}
+    command: [ "NETHERLANDS" ]
+    secrets:
+      - host_ssh_key
+      - host_ssh_pub_key
+      - host_ssh_known_hosts
+
+  netherlands2:
+    image: blipmaps.nl/combined:latest
+    build: .
+    volumes:
+      - /tmp/OUT:/root/rasp/NETHERLANDS/OUT
+      - /tmp/LOG:/root/rasp/NETHERLANDS/LOG
+    environment:
+      - START_DAY=2
+      - targetUrl=${targetUrl:-}
+    command: [ "NETHERLANDS" ]
+    secrets:
+      - host_ssh_key
+      - host_ssh_pub_key
+      - host_ssh_known_hosts
+
+  netherlands3:
+    image: blipmaps.nl/combined:latest
+    build: .
+    volumes:
+      - /tmp/OUT:/root/rasp/NETHERLANDS/OUT
+      - /tmp/LOG:/root/rasp/NETHERLANDS/LOG
+    environment:
+      - START_DAY=3
+      - targetUrl=${targetUrl:-}
+    command: [ "NETHERLANDS" ]
+    secrets:
+      - host_ssh_key
+      - host_ssh_pub_key
+      - host_ssh_known_hosts
+
+  netherlands4:
+    image: blipmaps.nl/combined:latest
+    build: .
+    volumes:
+      - /tmp/OUT:/root/rasp/NETHERLANDS/OUT
+      - /tmp/LOG:/root/rasp/NETHERLANDS/LOG
+    environment:
+      - START_DAY=4
+      - targetUrl=${targetUrl:-}
+    command: [ "NETHERLANDS" ]
+    secrets:
+      - host_ssh_key
+      - host_ssh_pub_key
+      - host_ssh_known_hosts
 
   nl1km0:
     image: blipmaps.nl/combined:latest
