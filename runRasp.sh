@@ -22,10 +22,11 @@ startDate=$(date);
 # cleanup of images that may be mounted
 echo "Removing previous images so current run is not contaminated"
 rm -rf /root/rasp/${region}/OUT/*
+rm -rf /root/rasp/${region}/wrfout_d0*
 
 ########################################################3
 #Generate the region
-echo "Running runGM on area ${region}"
+echo "Running runGM on area ${region}, startDay = ${START_DAY} and hour offset = ${OFFSET_HOUR}"
 runGM ${region}
 
 ########################################################3
@@ -40,9 +41,14 @@ if [ ! -z "${targetUrl}" ] ; then
 
     #Upload files
     echo "uploading images to ${finalTargetUrl} for ${region}"
-    scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.data ${finalTargetUrl}
-    scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.png ${finalTargetUrl}
-    scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.gif ${finalTargetUrl}
+    scp -q -C -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.data ${finalTargetUrl}
+    scp -q -C -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.png ${finalTargetUrl}
+    scp -q -C -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.gif ${finalTargetUrl}
+
+    if [ ! -z "${uploadXblFiles}" ] ; then
+	echo "uploading wrfout files for XBL"
+	scp -q -C -i /run/secrets/host_ssh_key /root/rasp/${region}/wrfout_d02* ${finalTargetUrl}
+    fi
 else
     echo "NOT uploading, targetUrl not set"
 fi

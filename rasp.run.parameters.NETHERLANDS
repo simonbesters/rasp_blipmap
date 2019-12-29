@@ -72,24 +72,25 @@
   ### BLIPMAPFILEDOLIST LISTS ALL GRIB FILES NEEDED
   #%GRIBFILE_DOLIST = ( 'NETHERLANDS'   => [ '0Z+6','0Z+9','0Z+12','0Z+15','0Z+18' ],);
 
+$day = 0;
+$offset = 0;
+$hourSix = 6;
+
 if(defined $ENV{'START_DAY'}) {
  $day = int($ENV{'START_DAY'});
 }
-if($day == 0) {
-%GRIBFILE_DOLIST = ( 'NETHERLANDS'   => [ '0Z+6','0Z+9','0Z+12','0Z+15','0Z+18' ],);
+if(defined $ENV{'OFFSET_HOUR'}) {
+ $offset = int($ENV{'OFFSET_HOUR'});
 }
-if($day == 1) {
-%GRIBFILE_DOLIST = ( 'NETHERLANDS'   => [ '0Z+30','0Z+33','0Z+36','0Z+39','0Z+42' ],);
-}
-if($day == 2) {
-%GRIBFILE_DOLIST = ( 'NETHERLANDS'   => [ '0Z+54','0Z+57','0Z+60','0Z+63','0Z+66' ],);
-}
-if($day == 3) {
-%GRIBFILE_DOLIST = ( 'NETHERLANDS'   => [ '0Z+78','0Z+81','0Z+84','0Z+87','0Z+90' ],);
-}
-if($day == 4) {
-%GRIBFILE_DOLIST = ( 'NETHERLANDS'   => [ '0Z+102','0Z+105','0Z+108','0Z+111','0Z+114' ],);
-}
+# So one of the prerequisites is that if you define an offset, you should
+# make sure that the number does not become negative !!!
+$hourSix += 24*$day - $offset;
+
+%GRIBFILE_DOLIST = ( 'NETHERLANDS'   => [ sprintf("%dZ+%d",$offset,$hourSix),
+		     		          sprintf("%dZ+%d",$offset,$hourSix+3),
+					  sprintf("%dZ+%d",$offset,$hourSix+6),
+					  sprintf("%dZ+%d",$offset,$hourSix+9),
+					  sprintf("%dZ+%d",$offset,$hourSix+12) ],);
 
 ###### SET DOMAIN PARAMETERS FOR STAGE1 [NON-WINDOW] ITERATION
   $FORECAST_PERIODHRS{'NETHERLANDS'}[0]              = 12;       # used only by initialization programs

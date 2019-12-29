@@ -68,7 +68,28 @@
   #12_hr:
   $GRIBFILES_PER_FORECAST_PERIOD{'NL1KM'} = 5 ;
   ### BLIPMAPFILEDOLIST LISTS ALL GRIB FILES NEEDED
-  %GRIBFILE_DOLIST = ( 'NL1KM'   => [ '18Z+12','18Z+15','18Z+18','18Z+21','18Z+24' ],);
+#  %GRIBFILE_DOLIST = ( 'NL1KM'   => [ '18Z+12','18Z+15','18Z+18','18Z+21','18Z+24' ],);
+#  %GRIBFILE_DOLIST = ( 'NL1KM'   => [ '0Z+6','0Z+9','0Z+12','0Z+15','0Z+18' ],);
+$day = 0;
+$offset = 0;
+$hourSix = 6;
+
+if(defined $ENV{'START_DAY'}) {
+ $day = int($ENV{'START_DAY'});
+}
+if(defined $ENV{'OFFSET_HOUR'}) {
+ $offset = int($ENV{'OFFSET_HOUR'});
+}
+# So one of the prerequisites is that if you define an offset, you should
+# make sure that the number does not become negative !!!
+$hourSix += 24*$day - $offset;
+
+%GRIBFILE_DOLIST = ( 'NL1KM'   => [ sprintf("%dZ+%d",$offset,$hourSix),
+		     	          sprintf("%dZ+%d",$offset,$hourSix+3),
+				  sprintf("%dZ+%d",$offset,$hourSix+6),
+				  sprintf("%dZ+%d",$offset,$hourSix+9),
+				  sprintf("%dZ+%d",$offset,$hourSix+12) ],);
+
 
 ###### SET DOMAIN PARAMETERS FOR STAGE1 [NON-WINDOW] ITERATION
   $FORECAST_PERIODHRS{'NL1KM'}[0]              = 12;       # used only by initialization programs
