@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd $(dirname "${0}")
+cd ..
 
 echo "this has run at $(date)"
 #exit

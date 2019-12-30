@@ -3,7 +3,7 @@ export offset=0;
 
 echo "Running NL images $(date)"
 cd $(dirname "${0}")
-
+cd ..
 
 #use the .env file to upload to blipmaps.nl ...
 
