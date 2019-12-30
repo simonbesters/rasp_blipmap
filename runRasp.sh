@@ -41,13 +41,15 @@ if [ ! -z "${targetUrl}" ] ; then
 
     #Upload files
     echo "uploading images to ${finalTargetUrl} for ${region}"
-    scp -q -C -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.data ${finalTargetUrl}
-    scp -q -C -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.png ${finalTargetUrl}
-    scp -q -C -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.gif ${finalTargetUrl}
+    scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.data ${finalTargetUrl}
+    scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.png ${finalTargetUrl}
+    scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.gif ${finalTargetUrl}
 
     if [ ! -z "${uploadXblFiles}" ] ; then
+	convertWrfoutForXbl.sh ${region}
+	
 	echo "uploading wrfout files for XBL"
-	scp -q -C -i /run/secrets/host_ssh_key /root/rasp/${region}/wrfout_d02* ${finalTargetUrl}
+	scp -q -C -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/wrfout_d02_??????????_1[2345]* ${finalTargetUrl}
     fi
 else
     echo "NOT uploading, targetUrl not set"

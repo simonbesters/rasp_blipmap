@@ -172,6 +172,7 @@ VOLUME ["/root/rasp/NETHERLANDS/OUT/", "/root/rasp/NETHERLANDS/LOG/","/root/rasp
 
 COPY runRasp.sh ${BASEDIR}/bin
 COPY convertImages.sh ${BASEDIR}/bin
+COPY convertWrfoutForXbl.sh ${BASEDIR}/bin
 
 #Add ssh keys to upload to $targetUrl location
 ARG ssh_prv_key
