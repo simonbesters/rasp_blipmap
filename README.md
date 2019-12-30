@@ -6,7 +6,7 @@ Howto run a forecast:
 
 Clone/download files to the repository:
 ```
-git clone git@gitlab.com:DavidRasp/blipmaps.nl.git
+git clone https://gitlab.com/DavidRasp/blipmaps.nl.git
 cd blipmaps.nl
 ./download_binaries.sh
 ```
