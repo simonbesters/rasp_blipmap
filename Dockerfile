@@ -15,6 +15,7 @@ RUN mkdir $BASEDIR
 # required packages
 RUN dnf update -y && dnf install -y \
   netcdf-fortran \
+  nco \
   libpng15 \
   iproute-tc \
   tcp_wrappers-libs \
