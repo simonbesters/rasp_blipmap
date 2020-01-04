@@ -49,7 +49,7 @@ if [ ! -z "${targetUrl}" ] ; then
 	convertWrfoutForXbl.sh ${region}
 	
 	echo "uploading wrfout files for XBL"
-	scp -q -C -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/wrfout_d02_??????????_1[2345]* ${finalTargetUrl}
+	scp -q -C -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/wrfout_d02_* ${finalTargetUrl}
     fi
 else
     echo "NOT uploading, targetUrl not set"
