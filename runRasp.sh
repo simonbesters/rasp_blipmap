@@ -16,7 +16,8 @@ fi
 # If you call docker run with a target url, e.g. like the one below, it wil upload them in a subdirectory of this location
 #targetUrl="user@host:/home/user/domains/domainname/public_html/images/"
 
-startDate=$(date);
+startDate=$(date +%y%m%d);
+startTime=$(date);
 
 ########################################################3
 # cleanup of images that may be mounted
@@ -37,6 +38,12 @@ convertImages.sh ${region}
 ########################################################3
 #Upload images
 if [ ! -z "${targetUrl}" ] ; then
+    # see if we need to offset START_DAY (because calculations took us over the day):
+    offset=$(( ($(date +%s) - $(date --date="${startDate}" +%s) )/(60*60*24) ))
+    if [ ${offset} -le ${START_DAY}  ] ; then
+	START_DAY=$(( ${START_DAY} - ${offset} ));
+    fi
+    
     finalTargetUrl="${targetUrl}/${region}.${START_DAY}"
 
     #Upload files
@@ -55,4 +62,4 @@ else
     echo "NOT uploading, targetUrl not set"
 fi
 
-echo "Started running rasp at ${startDate}, ended at $(date)";
+echo "Started running rasp at ${startTime}, ended at $(date)";
