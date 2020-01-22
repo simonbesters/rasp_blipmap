@@ -30,6 +30,7 @@ if [ ${secondsToWait} -gt 0 ] ; then
     sleep ${secondsToWait};
 fi
 
+uploadXblFiles="false"
 offset=0
 areas="netherlands0 netherlands1 netherlands2 netherlands3 netherlands4"
 for area in ${areas} ; do

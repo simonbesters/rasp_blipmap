@@ -52,7 +52,7 @@ if [ ! -z "${targetUrl}" ] ; then
     scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.png ${finalTargetUrl}
     scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.gif ${finalTargetUrl}
 
-    if [ ! -z "${uploadXblFiles}" ] ; then
+    if [ ! -z "${uploadXblFiles}" -a "${uploadXblFiles}" == "true" ] ; then
 	convertWrfoutForXbl.sh ${region}
 	
 	echo "uploading wrfout files for XBL"
