@@ -4,6 +4,8 @@ This project is to manage and develop the weather forecasts on https://blipmaps.
 
 Howto run a forecast:
 
+Install a modern docker-compose. Usually the OS provided ones are too old (as of January '20)
+
 Clone/download files to the repository:
 ```
 git clone https://gitlab.com/DavidRasp/blipmaps.nl.git
