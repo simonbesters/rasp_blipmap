@@ -8,7 +8,7 @@ times=("0830" "0900" "0930" "1000" "1030" "1100" "1130" "1200" "1230" "1300" "13
 
 usage="$0 <source region> - converts images in /rasp/root/<source region>/OUT> to animated gifs"
 
-parallel=4
+parallel=$(lscpu | grep '^CPU(s):' | awk '{print $2}')
 
 if [ $# -ne 1 ] ; then
     echo "ERROR - not enough arguments";

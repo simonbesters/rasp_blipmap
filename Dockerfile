@@ -8,7 +8,7 @@
 FROM fedora:25
 
 #Basic environment
-ENV BASEDIR=/root/rasp/
+ENV BASEDIR=/root/rasp
 ENV TZ=Europe/Amsterdam
 RUN mkdir $BASEDIR
 
