@@ -36,6 +36,7 @@ RUN dnf update -y && dnf install -y \
   vim \
   less \
   bzip2 \
+  pigz \
   openssh-clients
   
 # configure CPAN and install required modules
