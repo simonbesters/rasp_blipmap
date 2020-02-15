@@ -12,6 +12,17 @@ git clone https://gitlab.com/DavidRasp/blipmaps.nl.git
 cd blipmaps.nl
 ./download_binaries.sh
 ```
+Ensure the public/private keypair etc are available (if you don't upload files as a final step; just touch them):
+```
+secrets:
+  host_ssh_key:
+    file: ~/.ssh/id_ed25519
+  host_ssh_pub_key:
+    file: ~/.ssh/id_ed25519.pub
+  host_ssh_known_hosts:
+    file: ~/.ssh/known_hosts
+```
+
 Build image and create two directories to see the results:
 ```
 docker-compose -f docker-compose.yml build netherlands0  #only need to do this once
@@ -22,6 +33,7 @@ Run e.g. Netherlands today (see netherlands0 in docker-compose file):
 ```
 docker-compose -f docker-compose.yml run netherlands0
 ```
+If you want to upload the images afterwards, set the variable "targetUrl" to resemble something like "user@host:/home/user/domains/somerasp.org/images/"
 
 After that, 
 - You can find the images in the /tmp/OUT folder
