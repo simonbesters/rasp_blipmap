@@ -9,7 +9,7 @@ mkdir -p /tmp/OUT && mkdir -p /tmp/LOG
 
 export offset=12;
 export uploadXblFiles="false";
-export areas="netherlands1"
+export areas="netherlands1 nl1km2"
 
 . ./cron/runArea.sh
 runAreas

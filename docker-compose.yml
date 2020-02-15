@@ -120,6 +120,23 @@ services:
       - host_ssh_pub_key
       - host_ssh_known_hosts
 
+  nl1km1:
+    image: blipmaps.nl/combined:latest
+    build: .
+    volumes:
+      - /tmp/OUT:/root/rasp/NL1KM/OUT
+      - /tmp/LOG:/root/rasp/NL1KM/LOG
+    environment:
+      - START_DAY=2
+      - targetUrl=${targetUrl:-}
+      - OFFSET_HOUR=${offset:-0}
+      - uploadXblFiles=${uploadXblFiles:-}
+    command: [ "NL1KM" ]
+    secrets:
+      - host_ssh_key
+      - host_ssh_pub_key
+      - host_ssh_known_hosts
+
 secrets:
   host_ssh_key:
     file: ~/.ssh/id_ed25519
