@@ -1,8 +1,8 @@
 #!/bin/bash
 
-params=("bltopvariab" "bltopwind" "blwind" "blwindshear" "cape" "experimental1" "hbl" "hglider" "press540" "press616" "press701" "press795" "press846" "press899" "press955" "rain1" "sfcdewpt" "sfcsunpct" "sfctemp" "sfcwind0" "sounding1" "sounding10" "sounding11" "sounding12" "sounding13" "sounding14" "sounding15" "sounding2" "sounding23" "sounding3" "sounding4" "sounding5" "sounding6" "sounding7" "sounding8" "sounding9" "wblmaxmin" "wrf=CFRACH" "wrf=CFRACL" "wrf=CFRACM" "wstar" "wstar_bsratio" "zblclmask" "zsfclclmask" "zwblmaxmin");
+params=("bltopvariab" "bltopwind" "blwind" "blwindshear" "cape" "experimental1" "hbl" "hglider" "press540" "press616" "press701" "press795" "press846" "press899" "press955" "rain1" "sfcdewpt" "sfcsunpct" "sfctemp" "sfcwind0" "sounding1" "sounding10" "sounding11" "sounding12" "sounding13" "sounding14" "sounding15" "sounding18" "sounding2" "sounding23" "sounding3" "sounding4" "sounding5" "sounding6" "sounding7" "sounding8" "sounding9" "wblmaxmin" "wrf=CFRACH" "wrf=CFRACL" "wrf=CFRACM" "wstar" "bsratio" "zblclmask" "zsfclclmask" "zwblmaxmin");
 
-paramsConvertable=("bltopvariab" "bltopwind" "blwind" "blwindshear" "cape" "experimental1" "hbl" "hglider" "press540" "press616" "press701" "press795" "press846" "press899" "press955" "rain1" "sfcdewpt" "sfcsunpct" "sfctemp" "sfcwind0" "wblmaxmin" "wrf=CFRACH" "wrf=CFRACL" "wrf=CFRACM" "wstar" "wstar_bsratio" "zblclmask" "zsfclclmask" "zwblmaxmin");
+paramsConvertable=("bltopvariab" "bltopwind" "blwind" "blwindshear" "cape" "experimental1" "hbl" "hglider" "press540" "press616" "press701" "press795" "press846" "press899" "press955" "rain1" "sfcdewpt" "sfcsunpct" "sfctemp" "sfcwind0" "wblmaxmin" "wrf=CFRACH" "wrf=CFRACL" "wrf=CFRACM" "wstar" "bsratio" "zblclmask" "zsfclclmask" "zwblmaxmin");
 
 times=("0830" "0900" "0930" "1000" "1030" "1100" "1130" "1200" "1230" "1300" "1330" "1400" "1430" "1500" "1530" "1600" "1630" "1700" "1730" "1800" "1830" );
 
