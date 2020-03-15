@@ -50,12 +50,12 @@
   $LRUN_WINDOW{'NETHERLANDS'} = 0 ;
 
 ###### SET BASIC PARAMETER LIST
-#  @{$PARAMETER_DOLIST{'NETHERLANDS'}} = ( 'sfctemp','sfcsunpct','hbl','experimental1','hglider','bltopvariab','wstar175','wstar_bsratio', 'sfcwind0','blwind','bltopwind','blwindshear','wblmaxmin','zwblmaxmin', 'zsfclclmask','zblclmask','sfcdewpt', 'cape','rain1','wrf=CFRACL','wrf=CFRACM','wrf=CFRACH', 'press955','press899','press846','press795','press701','press616','press540','wstar' );
+#  @{$PARAMETER_DOLIST{'NETHERLANDS'}} = ( 'sfctemp','sfcsunpct','hbl','experimental1','hglider','bltopvariab','wstar175','bsratio', 'sfcwind0','blwind','bltopwind','blwindshear','wblmaxmin','zwblmaxmin', 'zsfclclmask','zblclmask','sfcdewpt', 'cape','rain1','wrf=CFRACL','wrf=CFRACM','wrf=CFRACH', 'press955','press899','press846','press795','press701','press616','press540','wstar' );
 
- @{$PARAMETER_DOLIST{'NETHERLANDS'}} = ( 'sfctemp','sfcsunpct','hbl','experimental1','hglider','bltopvariab','wstar175','wstar_bsratio', 'sfcwind0','blwind','bltopwind','blwindshear','wblmaxmin','zwblmaxmin', 'zsfclclmask','zblclmask','sfcdewpt', 'cape','rain1','wrf=CFRACL','wrf=CFRACM','wrf=CFRACH', 'press955','press899','press846','press795','press701','press616','press540','wstar', 'pfd_tot' );
+ @{$PARAMETER_DOLIST{'NETHERLANDS'}} = ( 'sfctemp','sfcsunpct','hbl','experimental1','hglider','bltopvariab','wstar175','bsratio', 'sfcwind0','blwind','bltopwind','blwindshear','wblmaxmin','zwblmaxmin', 'zsfclclmask','zblclmask','sfcdewpt', 'cape','rain1','wrf=CFRACL','wrf=CFRACM','wrf=CFRACH', 'press955','press899','press846','press795','press701','press616','press540','wstar', 'pfd_tot' );
 
 ###### ADD POSSIBLE SOUNDINGS  (corresponding data must be set in file ../WRF/NCL/rasp.ncl.region.data)
-  push @{$PARAMETER_DOLIST{'NETHERLANDS'}}, ( 'sounding1', 'sounding2', 'sounding3', 'sounding4', 'sounding5', 'sounding6', 'sounding7', 'sounding8', 'sounding9', 'sounding10', 'sounding11', 'sounding12', 'sounding13', 'sounding14', 'sounding15', 'sounding23' );  
+  push @{$PARAMETER_DOLIST{'NETHERLANDS'}}, ( 'sounding1', 'sounding2', 'sounding3', 'sounding4', 'sounding5', 'sounding6', 'sounding7', 'sounding8', 'sounding9', 'sounding10', 'sounding11', 'sounding12', 'sounding13', 'sounding14', 'sounding15', 'sounding18', 'sounding23' );  
 
 ######  SET GRID LOCAL TIME
 #  $LOCALTIME_ID{'NETHERLANDS'} = 'GMT' ;
