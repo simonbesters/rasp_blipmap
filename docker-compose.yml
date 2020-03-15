@@ -120,7 +120,7 @@ services:
       - host_ssh_pub_key
       - host_ssh_known_hosts
 
-  nl1km1:
+  nl1km2:
     image: blipmaps.nl/combined:latest
     build: .
     volumes:
