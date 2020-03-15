@@ -50,10 +50,10 @@
   $LRUN_WINDOW{'NL1KM'} = 0 ;
 
 ###### SET BASIC PARAMETER LIST
-  @{$PARAMETER_DOLIST{'NL1KM'}} = ( 'sfctemp','sfcsunpct','hbl','experimental1','hglider','bltopvariab','wstar175','wstar_bsratio', 'sfcwind0','blwind','bltopwind','blwindshear','wblmaxmin','zwblmaxmin', 'zsfclclmask','zblclmask','sfcdewpt', 'cape','rain1','wrf=CFRACL','wrf=CFRACM','wrf=CFRACH', 'press955','press899','press846','press795','press701','press616','press540','wstar', 'pfd_tot' );
+  @{$PARAMETER_DOLIST{'NL1KM'}} = ( 'sfctemp','sfcsunpct','hbl','experimental1','hglider','bltopvariab','wstar175','bsratio', 'sfcwind0','blwind','bltopwind','blwindshear','wblmaxmin','zwblmaxmin', 'zsfclclmask','zblclmask','sfcdewpt', 'cape','rain1','wrf=CFRACL','wrf=CFRACM','wrf=CFRACH', 'press955','press899','press846','press795','press701','press616','press540','wstar', 'pfd_tot' );
 
 ###### ADD POSSIBLE SOUNDINGS  (corresponding data must be set in file ../WRF/NCL/rasp.ncl.region.data)
-  push @{$PARAMETER_DOLIST{'NL1KM'}}, ( 'sounding2', 'sounding4', 'sounding6', 'sounding7', 'sounding9', 'sounding10', 'sounding13', 'sounding23' );  
+  push @{$PARAMETER_DOLIST{'NL1KM'}}, ( 'sounding2', 'sounding4', 'sounding6', 'sounding7', 'sounding9', 'sounding10', 'sounding13', 'sounding18', 'sounding23' );  
 
 ######  SET GRID LOCAL TIME
 #  $LOCALTIME_ID{'NL1KM'} = 'GMT' ;
