@@ -48,17 +48,17 @@ if [ ! -z "${targetUrl}" ] ; then
 
     #Upload files
     echo "uploading images to ${finalTargetUrl} for ${region}"
-    scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.data ${finalTargetUrl}
-    scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.png ${finalTargetUrl}
-    scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.gif ${finalTargetUrl}
+    scp -q -p -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.data ${finalTargetUrl}
+    scp -q -p -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.png ${finalTargetUrl}
+    scp -q -p -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/*.gif ${finalTargetUrl}
 
     if [ ! -z "${uploadXblFiles}" -a "${uploadXblFiles}" == "true" ] ; then
 	convertWrfoutForXbl.sh ${region}
 	
 	echo "uploading wrfout files for XBL"
-	scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/wrfout_d02_* ${finalTargetUrl}
+	scp -q -p -i /run/secrets/host_ssh_key /root/rasp/${region}/OUT/wrfout_d02_* ${finalTargetUrl}
     fi
-    scp -q -i /run/secrets/host_ssh_key /root/rasp/${region}/LOG/GM.printout ${finalTargetUrl}
+    scp -q -p -i /run/secrets/host_ssh_key /root/rasp/${region}/LOG/GM.printout ${finalTargetUrl}
 else
     echo "NOT uploading, targetUrl not set"
 fi
