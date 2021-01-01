@@ -3,7 +3,7 @@
 function runAreas() {
     for area in ${areas} ; do
 	
-	if [[ ${area} =~ nl1km ]] ; then
+	if [[ ${area} =~ nl1km?? ]] ; then
 	    uploadXblFiles="true";
 	else
 	    uploadXblFiles="false";
