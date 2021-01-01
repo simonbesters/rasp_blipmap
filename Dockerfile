@@ -173,16 +173,7 @@ WORKDIR /root/rasp/
 VOLUME ["/root/rasp/NETHERLANDS/OUT/", "/root/rasp/NETHERLANDS/LOG/","/root/rasp/NL1KM/OUT/", "/root/rasp/NL1KM/LOG/"]
 
 COPY runRasp.sh ${BASEDIR}/bin
-COPY convertImages.sh ${BASEDIR}/bin
-COPY convertWrfoutForXbl.sh ${BASEDIR}/bin
-
-#Add ssh keys to upload to $targetUrl location
-ARG ssh_prv_key
-ARG ssh_pub_key
-ARG ssh_known_hosts
-RUN mkdir -p /root/.ssh && \
-    chmod 0700 /root/.ssh
-RUN ln -s /run/secrets/host_ssh_known_hosts ~/.ssh/known_hosts
+COPY meteogram.ncl ${BASEDIR}/bin
 
 # The runRasp.sh script is called with 1 argument: The area it is running
 ENTRYPOINT ["runRasp.sh"]

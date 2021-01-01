@@ -47,10 +47,8 @@ Goals:
   - Split binaries / files which are never adjusted and put them on docker.blipmaps.nl
     - Put config files in Gitlab 
   - Create OSM sync script (download OSM & put that on docker.blipmaps.nl)
-  - Webserver should have region defined in subdirectories
   
 Extra goals:
   - Have dinner together
   - Add XCSoar support
-  - Get XBL plots working
-    - XBL: Ensure the NCL scripts are copied / stripped of superfluous data
+  - Add meteogram
