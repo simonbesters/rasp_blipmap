@@ -4,22 +4,18 @@ services:
   callback:
     image: blipmaps.nl/callback:latest
     build: .
+    restart: always
     volumes:
-      - /tmp/OUT:/root/rasp/NETHERLANDS/OUT
-      - /tmp/LOG:/root/rasp/NETHERLANDS/LOG
+      - /tmp/OUT:/data
     environment:
-      - START_DAY=0
       - OFFSET_HOUR=${offset:-0}
       - targetUrl=${targetUrl:-}
       - uploadXblFiles=${uploadXblFiles:-}
-    command: [ "NETHERLANDS" ]
+    command: [ "foobar" ]
     secrets:
       - host_ssh_key
       - host_ssh_pub_key
       - host_ssh_known_hosts
-
-
-
 
 secrets:
   host_ssh_key:

@@ -172,8 +172,7 @@ WORKDIR /root/rasp/
 
 VOLUME ["/root/rasp/NETHERLANDS/OUT/", "/root/rasp/NETHERLANDS/LOG/","/root/rasp/NL1KM/OUT/", "/root/rasp/NL1KM/LOG/"]
 
-COPY runRasp.sh ${BASEDIR}/bin
-COPY meteogram.ncl ${BASEDIR}/bin
+COPY logo.png runRasp.sh meteogram.ncl sitedata.ncl ${BASEDIR}/bin/
 
 # The runRasp.sh script is called with 1 argument: The area it is running
 ENTRYPOINT ["runRasp.sh"]

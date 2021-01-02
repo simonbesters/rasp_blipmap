@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. ./rasp.site.runenvironment
+
 ########################################################
 # check parameters
 usage="$0 <region> - will execute runGM on region, convert files that can be used in classic environment and upload them"
@@ -28,15 +30,25 @@ startDateTime=$(date);
 
 echo "Running runGM on area ${region}, startDay = ${START_DAY} and hour offset = ${OFFSET_HOUR}"
 runGM ${region}
-ncl ${BASEDIR}/bin/meteogram.ncl DOMAIN=\"${region}\"
+
+########################################################
+#Generate the meteogram images
+echo "Running meteogram on $(date)"
+cp bin/logo.png ${region}/OUT/logo.png
+ncl bin/meteogram.ncl DOMAIN=\"${region}\" SITEDATA=\"/root/rasp/bin/sitedata.ncl\"
+# TODO: rename files in order to correct winter time / summer time 
 
 ########################################################
 # Move images for later processing (moving, transforming, ... anything not RASP related)
 targetDir="/root/rasp/${region}/OUT/${startDate}/${startTime}/${region}/${START_DAY}"
 mkdir -p ${targetDir}
+chmod -R uga+rwX /root/rasp/${region}/OUT/*
+
 mv /root/rasp/${region}/OUT/*.data ${targetDir}
 mv /root/rasp/${region}/OUT/*.png ${targetDir}
 mv /root/rasp/${region}/wrfout_d02_* ${targetDir}
+chmod 666 ${targetDir}/*
+chmod 666 /root/rasp/${region}/LOG/GM.printout
 mv /root/rasp/${region}/LOG/GM.printout ${targetDir}
 
 echo "Started running rasp at ${startDate} ${startTime}, ended at $(date)";

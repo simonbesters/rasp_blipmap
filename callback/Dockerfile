@@ -39,9 +39,8 @@ RUN mkdir -p /root/.ssh && \
     chmod 0700 /root/.ssh
 RUN ln -s /run/secrets/host_ssh_known_hosts ~/.ssh/known_hosts
 
-# The runRasp.sh script is called with 1 argument: The area it is running
 ENTRYPOINT ["callback.sh"]
-CMD ["NETHERLANDS"]
+CMD ["/data"]
 
 
 
