@@ -19,7 +19,6 @@ IFS='/'
 read -ra parts <<< "${1}"
 IFS=' '
 length=${#parts[@]}
-echo "length = ${length}"
 basedirectory=""
 for ((idx=1; idx < $(( ${length} - 4 )) ; idx++)) ; do
     basedirectory="${basedirectory}/${parts[$idx]}"

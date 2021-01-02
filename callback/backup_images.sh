@@ -8,7 +8,9 @@ if [ ! -z "${backupUrl}" ] ; then
     
     #Upload files
     echo "uploading images to ${backupUrl} for ${region}"
-    scp -q -i /run/secrets/host_ssh_key ${dataDirectory}/* ${backupUrl}
+
+    rsync -av -e "ssh -i /run/secrets/host_ssh_key" ${basedirectory}/* ${backupUrl}
+    #rsync -av -e ssh ${basedirectory}/* ${backupUrl} # used for testing
 else
     echo "NOT backing up data, backupRul not set"
 fi
