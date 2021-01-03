@@ -36,11 +36,10 @@ docker-compose -f docker-compose.yml run netherlands0
 If you want to upload the images afterwards, set the variable "targetUrl" to resemble something like "user@host:/home/user/domains/somerasp.org/images/"
 
 After that, 
-- You can find the images in the /tmp/OUT folder
+- You can find the images in the /tmp/OUT/<date>/<time>/<region>/<offset> folder
 - The images can be served by https://github.com/dingetje/RASPViewer:
   - The corners.js file must be adjusted to match the logfiles which are named ncl.out.02.xxx
   - Ensure you adjust the server name in index.html
-- If you make a .env file, and add a line "targetUrl=user@host:/home/user/domain/public_html/images", the script will upload the images there (in a subdirectory ./${region}.N)
 
 Some things to do:
 Goals:
@@ -51,4 +50,9 @@ Goals:
 Extra goals:
   - Have dinner together
   - Add XCSoar support
-  - Add meteogram
+
+## Meteogram
+You can locate the locations which are used to generate a meteogram in the file sitedata.ncl
+
+## Post processing
+After you are done with generating the forecast and its images, we can do postprocessing. Because I wanted to automate that I've used a separate container. See the callback directory for that. 
