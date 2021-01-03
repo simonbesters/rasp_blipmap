@@ -175,8 +175,7 @@ VOLUME ["/root/rasp/NETHERLANDS/OUT/", "/root/rasp/NETHERLANDS/LOG/","/root/rasp
 COPY runRasp.sh meteogram.ncl sitedata.ncl ${BASEDIR}/bin/
 COPY logo.png ${BASEDIR}/
 
-# The runRasp.sh script is called with 1 argument: The area it is running
-ENTRYPOINT ["runRasp.sh"]
-CMD ["NETHERLANDS"]
+#Run RASP, move the images to the final directory and copy some extra log files
+CMD ["runRasp.sh","NETHERLANDS"]
 
 

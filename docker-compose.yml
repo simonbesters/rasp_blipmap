@@ -10,7 +10,7 @@ services:
     environment:
       - START_DAY=0
       - OFFSET_HOUR=${offset:-0}
-    command: [ "NETHERLANDS" ]
+    command: [ "runRasp.sh","NETHERLANDS" ]
 
   netherlands1:
     image: blipmaps.nl/combined:latest
@@ -21,7 +21,7 @@ services:
     environment:
       - START_DAY=1
       - OFFSET_HOUR=${offset:-0}
-    command: [ "NETHERLANDS" ]
+    command: [ "runRasp.sh","NETHERLANDS" ]
 
   netherlands2:
     image: blipmaps.nl/combined:latest
@@ -32,7 +32,7 @@ services:
     environment:
       - START_DAY=2
       - OFFSET_HOUR=${offset:-0}
-    command: [ "NETHERLANDS" ]
+    command: [ "runRasp.sh","NETHERLANDS" ]
 
   netherlands3:
     image: blipmaps.nl/combined:latest
@@ -43,7 +43,7 @@ services:
     environment:
       - START_DAY=3
       - OFFSET_HOUR=${offset:-0}
-    command: [ "NETHERLANDS" ]
+    command: [ "runRasp.sh","NETHERLANDS" ]
 
   netherlands4:
     image: blipmaps.nl/combined:latest
@@ -54,7 +54,7 @@ services:
     environment:
       - START_DAY=4
       - OFFSET_HOUR=${offset:-0}
-    command: [ "NETHERLANDS" ]
+    command: [ "runRasp.sh","NETHERLANDS" ]
 
   nl1km0:
     image: blipmaps.nl/combined:latest
@@ -65,7 +65,7 @@ services:
     environment:
       - START_DAY=0
       - OFFSET_HOUR=${offset:-0}
-    command: [ "NL1KM" ]
+    command: [ "runRasp.sh","NL1KM" ]
 
   nl1km1:
     image: blipmaps.nl/combined:latest
@@ -76,7 +76,8 @@ services:
     environment:
       - START_DAY=1
       - OFFSET_HOUR=${offset:-0}
-    command: [ "NL1KM" ]
+    command: [ "runRasp.sh","NL1KM" ]
+
 
   nl1km2:
     image: blipmaps.nl/combined:latest
@@ -87,5 +88,6 @@ services:
     environment:
       - START_DAY=2
       - OFFSET_HOUR=${offset:-0}
-    command: [ "NL1KM" ]
+    command: [ "runRasp.sh","NL1KM" ]
+
 

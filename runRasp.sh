@@ -51,6 +51,14 @@ mv /root/rasp/${region}/OUT/*.png ${targetDir}
 mv /root/rasp/${region}/wrfout_d02_* ${targetDir}
 chmod 666 ${targetDir}/*
 chmod 666 /root/rasp/${region}/LOG/GM.printout
+
+# signal I'm done:
 mv /root/rasp/${region}/LOG/GM.printout ${targetDir}
+
+########################################################
+# Move log files for further analysis
+mv /root/rasp/${region}/wrf.out /root/rasp/${region}/LOG/
+mv /root/rasp/${region}/metgrid.log /root/rasp/${region}/LOG/
+mv /root/rasp/${region}/ungrib.log /root/rasp/${region}/LOG/
 
 echo "Started running rasp at ${startDate} ${startTime}, ended at $(date)";
