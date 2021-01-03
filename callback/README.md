@@ -17,6 +17,6 @@ E.g. in my .env file I have the following:
 
 targetUrl="rasp@host:/home/rasp/domain/blipmaps.nl/images/"
 backupUrl="rasp@backuphost:/home/rasp/backupdir/"
-CALLBACK_NETHERLANDS="deleteWrfFiles.sh convertImages.sh upload_images.sh backup_images.sh delete_images.sh"
-CALLBACK_NL1KM="convertImages.sh convertWrfoutForXbl.sh upload_images.sh backup_images.sh delete_images.sh"
+CALLBACK_NETHERLANDS=deleteWrfFiles.sh convertImages.sh upload_images.sh backup_images.sh delete_images.sh
+CALLBACK_NL1KM=convertImages.sh convertWrfoutForXbl.sh upload_images.sh backup_images.sh delete_images.sh
 

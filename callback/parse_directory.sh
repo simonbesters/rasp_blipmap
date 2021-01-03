@@ -12,25 +12,25 @@
 
 # These variables can be used in scripts that do actual work. 
 
-dataDirectory=${1}
+export dataDirectory=${1}
 
 #determine base directory
 IFS='/' 
 read -ra parts <<< "${1}"
 IFS=' '
 length=${#parts[@]}
-basedirectory=""
+export basedirectory=""
 for ((idx=1; idx < $(( ${length} - 4 )) ; idx++)) ; do
     basedirectory="${basedirectory}/${parts[$idx]}"
 done
 
 #and the rest
-startDate=${parts[$(( ${length} - 4 ))]}
-startTime=${parts[$(( ${length} - 3 ))]}
-region=${parts[$(( ${length} - 2 ))]}
-START_DAY=${parts[$(( ${length} -1 ))]}
+export startDate=${parts[$(( ${length} - 4 ))]}
+export startTime=${parts[$(( ${length} - 3 ))]}
+export region=${parts[$(( ${length} - 2 ))]}
+export START_DAY=${parts[$(( ${length} -1 ))]}
 
-# echo "basedirectory = ${basedirectory}"
+echo "Parsed basedirectory = ${basedirectory}"
 # echo "startDate = ${startDate}"
 # echo "startTime = ${startTime}"
 # echo "region = ${region}"

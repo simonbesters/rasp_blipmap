@@ -9,50 +9,41 @@ ENV BASEDIR=/
 ENV TZ=Europe/Amsterdam
 
 # required packages
-RUN apt-get update && apt-get install -y locales 
+RUN apt-get update && apt-get install -y locales \
   findutils \
-  ImageMagick \
-  ncl \
-  netcdf \
-  libpng \
-  libjpeg-turbo \
+  imagemagick \
+  ncl-ncarg \
+  netcdf-bin \
+  libpng16-16 \
+  libjpeg-turbo-progs \
   less \
   bzip2 \
   pigz \
-  openssh-clients
+  openssh-client \
+  rsync \
+  nco
 
 RUN rm -rf /var/lib/apt/lists/* && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 ENV LANG en_US.utf8
+
+ENV PATH="${BASEDIR}/raspbin:${PATH}"
+RUN export BASEDIR=${BASEDIR}
+RUN export PATH=${PATH}
 
 RUN mkdir /raspbin
 WORKDIR /raspbin
 
 VOLUME ["/data"]
 
-COPY *.sh ${BASEDIR}/raspbin
+COPY backup_images.sh callback.sh convertImages.sh convertWrfoutForXbl.sh delete_images.sh deleteWrfFiles.sh doNothing.sh parse_directory.sh upload_images.sh ${BASEDIR}/raspbin/
 
 #Add ssh keys to upload to $targetUrl location
 ARG ssh_prv_key
 ARG ssh_pub_key
 ARG ssh_known_hosts
-RUN mkdir -p /root/.ssh && \
-    chmod 0700 /root/.ssh
-RUN ln -s /run/secrets/host_ssh_known_hosts ~/.ssh/known_hosts
+RUN mkdir -p ~/.ssh && \
+    chmod 0700 ~/.ssh && \
+    ln -s /run/secrets/host_ssh_known_hosts ~/.ssh/known_hosts
 
 ENTRYPOINT ["callback.sh"]
 CMD ["/data"]
-
-
-
-
-
-
-# create standard linux image
-
-# install required apps (netcdf, image stuff, ssh, ... )
-
-# copy scripts
-
-# create script that will poll directory every 10s.
-
-# make it run all scripts from .env

@@ -1,5 +1,4 @@
 #!/bin/bash
-. ./parse_directory.sh ${1}
 
 params=("bltopvariab" "bltopwind" "blwind" "blwindshear" "cape" "experimental1" "hbl" "hglider" "press540" "press616" "press701" "press795" "press846" "press899" "press955" "rain1" "sfcdewpt" "sfcsunpct" "sfctemp" "sfcwind0" "sounding1" "sounding10" "sounding11" "sounding12" "sounding13" "sounding14" "sounding15" "sounding18" "sounding2" "sounding23" "sounding3" "sounding4" "sounding5" "sounding6" "sounding7" "sounding8" "sounding9" "wblmaxmin" "wrf=CFRACH" "wrf=CFRACL" "wrf=CFRACM" "wstar" "bsratio" "zblclmask" "zsfclclmask" "zwblmaxmin");
 

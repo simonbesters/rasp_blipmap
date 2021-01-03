@@ -1,7 +1,5 @@
 #!/bin/bash
 
-. ./parse_directory.sh
-
 # If you call docker run with a target url, e.g. like the one below, it wil upload them in a subdirectory of this location
 #targetUrl="user@host:/home/user/domains/domainname/public_html/images/"
 

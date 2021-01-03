@@ -1,5 +1,4 @@
 #!/bin/bash
-. ./parse_directory ${1}
 
 cd ${dataDirectory}
 
@@ -16,7 +15,7 @@ mv tmp/wrfout_d02* .
 rmdir tmp
 
 echo "converting wrf files: zipping files for XBL ($(date))"
-find ./OUT \
+find ./ \
      -maxdepth 1 \
      -type f \
      -name "wrfout_d02_??????????_*" \

@@ -33,10 +33,12 @@ runGM ${region}
 
 ########################################################
 #Generate the meteogram images
-echo "Running meteogram on $(date)"
-cp bin/logo.png ${region}/OUT/logo.png
-ncl bin/meteogram.ncl DOMAIN=\"${region}\" SITEDATA=\"/root/rasp/bin/sitedata.ncl\"
-# TODO: rename files in order to correct winter time / summer time 
+if [ "${region}" == "NETHERLANDS" ] ; then
+    echo "Running meteogram on $(date)"
+    cp bin/logo.png ${region}/OUT/logo.png
+    ncl bin/meteogram.ncl DOMAIN=\"${region}\" SITEDATA=\"/root/rasp/bin/sitedata.ncl\"
+fi
+# TODO: rename files in order to correct winter time / summer time ?
 
 ########################################################
 # Move images for later processing (moving, transforming, ... anything not RASP related)

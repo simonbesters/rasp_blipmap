@@ -26,6 +26,7 @@ function processPrintoutFile {
 	./${st} ${rundir}
     done
     echo "callback functions called: ${scripts}" > ${rundir}/${callbackDone}
+    rm -f ${rundir}/GM.printout
 }
 
 dataDir=${1}

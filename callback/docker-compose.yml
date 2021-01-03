@@ -10,8 +10,11 @@ services:
     environment:
       - OFFSET_HOUR=${offset:-0}
       - targetUrl=${targetUrl:-}
+      - backupUrl=${backupUrl:-}
       - uploadXblFiles=${uploadXblFiles:-}
-    command: [ "foobar" ]
+      - CALLBACK_NETHERLANDS=${CALLBACK_NETHERLANDS:-doNothing.sh}
+      - CALLBACK_NL1KM=${CALLBACK_NL1KM:-doNothing.sh}
+    command: [ "/data" ]
     secrets:
       - host_ssh_key
       - host_ssh_pub_key
