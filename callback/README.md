@@ -42,5 +42,5 @@ docker-compose -f docker-compose.yml up
 
 Run the image as daemon, it will startup after a reboot:
 ```
-docker-compose -d -f docker-compose.yml up
+docker-compose -f docker-compose.yml up -d
 ```

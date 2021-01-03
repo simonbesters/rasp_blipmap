@@ -26,7 +26,8 @@ function processPrintoutFile {
 	./${st} ${rundir}
     done
     echo "callback functions called: ${scripts}" > ${rundir}/${callbackDone}
-    rm -f ${rundir}/GM.printout
+    # it may not be there anymore due to scripts removing it
+    find ${rundir} -type f -name GM.printout -delete
 }
 
 dataDir=${1}
