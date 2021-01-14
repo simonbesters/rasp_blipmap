@@ -8,7 +8,9 @@
 if [ ! -z "${targetUrl}" ] ; then
     
     # see if we need to offset START_DAY (because calculations took us over the day):
-    offset=$(( ($(date +%s) - $(date --date="${startDate} ${startTime}" +%s) )/(60*60*24) ))
+    # ensure "date" is a date and does not contain time!!
+    currentDate=$(date +"%Y%m%d")
+    offset=$(( ($(date --date="${currentDate}" +%s) - $(date --date="${startDate}" +%s) )/(60*60*24) ))
     if [ ${offset} -le ${START_DAY}  ] ; then
 	ACTUAL_START_DAY=$(( ${START_DAY} - ${offset} ));
     fi

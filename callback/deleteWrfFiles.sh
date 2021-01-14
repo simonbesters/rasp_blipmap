@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rm -rf ${1}/wrfout_d02_*
+rm -rf ${dataDirectory}/wrfout_d02_*
