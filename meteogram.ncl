@@ -1012,7 +1012,7 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    if ( dimsizes(wpt_code).eq.0 ) then
       continue
    end if 
-   windgram=outdir+wpt_code(0)
+   windgram=outdir+"meteogram_"+wpt_code(0)
 
 
    ;windgram=outdir+day+"_"+sites(ns)
