@@ -1,10 +1,51 @@
-; www.blipmaps.nl v20201229
+; Script generating Meteograms for RASP BLIPMAPS
+; TJ Olney - Tonino Tarsi 2019 - Blipmaps.nl
+; Renamed Windgram to Meteogram as much more info is included.
+
+; USAGE: ncl meteogram.ncl DOMAIN=\"yourdomainname\"
+; Perhaps you need to change the locations where to find your wrf-data, blipmap parameter-data and sitedata.ncl file
+; Change the logo file if you like and check if you use d2.data or need to change to w2.data
+; Add your meteogram locations to the sitedata.ncl file, for example 1,Terlet,d2,5.9233,52.0567,
+
+; Document your changes and change the version number. BM stands for Blipmaps
+meteogram_version = "BM20210209"
+wrf_version = "3.6.1"
+
+; Changes in BM20210209 - ABC
+; -Added non-metric conversion option
+; -Added option to use paraglider symbol
+; -Modified placement of surface sun and 2m wind speed and direction to allow for changing ptop
+; -Corrected 3-digit wind direction to handle 1 digit directions properly
+; -Minor spacing corrections in legend
+
+; Changes in BM20210118
+; -Added Meteogram version also on plot
+; -Changed winddirection @ 2m AGL to always show 3 digits
+; -Changed 1,2m/s in legend5 to 1,14m/s
+; -Increased locX,LocY gridpointnumbers by +1,+1 only on the Meteogram plot and printout, see explanation below
+; -Added PFD to plot
+; -Changed font from F14 to F21 Helvetica
+; -Changed resolution from 800x800 to 900x900
+; -Added "meteogram_" as prefix to output filename
+; -Added sunrise and sunset times
+; -Added text all times are local
+
+; Earlier changes to https://github.com/ToninoTarsi/windgramtt version Jan 3, 2020
+; -Changed bregion into Domain to use the parameter data files
+; -Removed tstride for multiple parameters that use data files to get all half hour results shown
+; -Removed times to have all WRF data files being used for our model run and changed start_time_margin to 1.5 
+; -Added windspeed and winddirection @ 2m AGL at the bottom
+; -Moved CAPE values to the top
+; -Changed legend text bottom and added legend m/s AMSL on top
+; -Slightly darkened the snowflake symbol/0 degree level so that it is visible over white 100% relative humidity/clouds
+
+
 ; TJ Olney's - Tonino Tarsi 2019  windgram local lapserate and lcl generator
 ; Requires ncl 5.1.1 for addfiles
 ; Replace your domains regions sites wlats wlons and wgrids for those below
 ; can invoked without args and will print the default windgram to x11 display
-; USAGE:  ncl meteogram.ncl DOMAIN=\"NETHERLANDS\"
-; USAGE:  ncl meteogram.ncl DOMAIN=\"domainname\" [ptop=nn] [rhcut = nn ] [show_[xxx]=[0|1]]
+;
+; USAGE:  ncl windgramtt.ncl DOMAIN=\"domainname\" [ptop=nn] [rhcut = nn ] [show_[xxx]=[0|1]]
 ;
 ; rhcut is a number 1-99 for relative humidity.  Default is 95 so >95%rh gets cross hatched.
 ; Choose your favorite number to cross hatch the time/heights with high enough rh for clouds 
@@ -26,6 +67,12 @@
  
 BASEDIR=getenv("BASEDIR")
 NCARG_ROOT=getenv("NCARG_ROOT")  
+
+; Options chosen:
+
+show_pfd = 1
+non_metric = 0
+use_paraglider = 0
 
 if (.not.isvar("DOMAIN")) then
    print("Usage: windgramtt.ncl DOMAIN=domainname SITEDATA=sitedata.ncl [ptop=nn] [rhcut = nn ] [show_[xxx]=[0|1]]")
@@ -107,6 +154,7 @@ end
 operator = "blipmaps.nl"
 default_type = "png"
 default_ptop = 40                        ; usually 20, I changed for TS upper instability
+;                                          Note! changing ptop modifies the y-axis and messes with plot positioning
 default_rhcut = 95
 tilted_grid=0                             ; set to 1 if your grid is tilted from NS to cover an oblique area like England or Italy.
 one_site = False                          ; ??? why needed? see near line 369
@@ -139,7 +187,7 @@ if (.not.isvar("use_only_hours")) then
 end if
 
 if (.not.isvar("tmp_units")) then
-   tmp_units = 0		; change to 0 for C for Celsius, 1 for Fahrenheit; only affects the show_temp variable.
+   tmp_units = 1		; change to 0 for C for Celsius, 1 for Fahrenheit; only affects the show_temp variable.
 end if
 
 if (.not.isvar("show_cutop")) then
@@ -255,6 +303,13 @@ end if
 ;;;;;
 
 
+;;;;;;;;;;;;;;;;;
+if (.not.isvar("show_pfd")) then
+   show_pfd = 1
+end if
+;;;;;;;;;;;;;;;;;
+
+
 ;;; where to find the wrfout files to use as raw data.
 ;;; don't complain about fallbacks when parameters are out of range.
 
@@ -360,7 +415,6 @@ end do
 
 numsites = j
 site_params := site_params(:,:j-1)
-
 
 site_ndx = stringtointeger(site_params(0,:))  ; make it an integer array for use as a subscript  
 sitedomain = site_params(1,:)
@@ -707,9 +761,7 @@ z = wrf_user_getvar(a,"z",-1)   ; ToninoTarsi 2019   Get z direcly from wrf in m
 dimv = dimsizes(z)
 
 zmeter = z                                           ; used below in meters
-
-
-
+zft = z*3.2808
 z@units = "m"
 z!0 = "Time"
 z!1 = "levels"
@@ -724,6 +776,13 @@ zmeter!1 = "levels"
 zmeter!2 = "south_north"
 zmeter!3 = "west_east" 
 zmeter&Time = taus
+
+zft@units = "ft"
+zft!0 = "Time"
+zft!1 = "levels"
+zft!2 = "south_north"
+zft!3 = "west_east"
+zft&Time = taus
 
 mslp = wrf_slp( zmeter, tk, press, QVAPOR ) 
 
@@ -785,6 +844,10 @@ do i=0,dims(0)-1
    lst_string_striped(i) = sprinti("%0.2i", lst(i)) +  chartostring(timesinfiles(i,14:15))
    lst_is_hour(i) = str_index_of_substr(lst_string(i),":00",-1)
 
+;;;;;
+; To do: Check if summer/wintertime is correct based on difference WRF (UTC/GMT) time and Parameter data (LST) time
+;;;;;
+
    ora_solare = True
 
 
@@ -829,6 +892,33 @@ begin
    return (retData)
 end
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+undef("getpfd_data")
+function  getpfd_data(DOMAIN:string,bparam:string,bnumy:integer,bnumx:integer)
+local filecommand2,fs,a,i,retData
+begin
+   pfdData = new( (/bnumy,bnumx/), float)
+      filecommand2 = BASEDIR+"/"+DOMAIN+"/OUT/" + bparam + ".data" 
+      print(filecommand2)
+      if ( fileexists(filecommand2) ) then 
+         a = readAsciiTable(filecommand2,bnumx,"float",4 )
+         pfdData(:,:) = a
+      else
+         pfdData(:,:) = default_fillvalue("float")
+         print("no data for "  + bparam)
+      end if
+
+  return (pfdData)
+end
+
+if (show_pfd.ne.0) then
+    pfd_day = getpfd_data(region,"pfd_tot",numy,numx)
+end if
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;
 
 if (show_rain.ne.0) then
    rain1_multitime = getblipmap_data(region,"rain1",numtimes, numy,numx)
@@ -962,7 +1052,6 @@ theYear = stringtointeger(chartostring(timesinfiles(1,0:3)))
 theMonth = stringtointeger(chartostring(timesinfiles(1,5:6)))
 theDay  = stringtointeger(chartostring(timesinfiles(1,8:9)))
 
-
 theWeekNumber = day_of_week(theYear,theMonth,theDay)
 theDayName = dayNames(theWeekNumber)
 
@@ -1012,8 +1101,9 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    if ( dimsizes(wpt_code).eq.0 ) then
       continue
    end if 
+;windgram=outdir+wpt_code(0)
+;Added meteo_ as prefix to file
    windgram=outdir+"meteogram_"+wpt_code(0)
-
 
    ;windgram=outdir+day+"_"+sites(ns)
 
@@ -1034,9 +1124,8 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    ; must be destroyed at end of loop must be within the loop color array can be outside though
    ; wks = gsn_open_wks(type , windgram) ; open a workstation as type with constructed name
 
-; Increased this to fit half hour results, it was type@wkWidth = 800
-   type@wkWidth = 800
-   type@wkHeight = 800
+   type@wkWidth = 900
+   type@wkHeight = 900
 
    wks = gsn_open_wks(type, windgram)
 
@@ -1139,7 +1228,7 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    theselevels = plevels(0:ptop-1)                            ; theselevels contain only the levels up to ptop 
    z&levels = plevels                                         ; don't have plevels until locY locX  use as coordinate variable for z
 
-   zhere = round(zmeter(:,:ptop-1,locY,locX)+.5,0)               ; create an array for only the levels to be plotted.
+   zhere = round(zft(:,:ptop-1,locY,locX)+.5,0)               ; create an array for only the levels to be plotted.
    zhere!0 = "Time"			                   ; label dimensions
    zhere!1 = "plevels"                          
    zhere&Time = taus                                          ; set coordinate variables for each named dimension
@@ -1164,8 +1253,32 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    ; this goes to stdout therefore part of rasp.regionxyz.printout, change elevation units if desired.
 
    print(" ")
-   print ("Windgram for "+sites(ns)+" site:ns="+ns+" from the "+region+" "+wgrid+" grid at point "+locY+" "+locX+" "+wlons(ns)+" "+wlats(ns)+" model elevation:"+round(h,0)+"m ASL" )
+
+;;;;
+;At blipmaps.nl we also run a click-on-the-map Blipspot to see the parameter data values behind the maps
+;The Lat,Lon of the Blipspot and the Meteogram are the same and the data derived from the parameter data files is also the same
+;But the locX,locY gridpointnumbers of Meteogram are -1,-1 compared to the Blipspot
+;Therefore the gridpointnumbers are increased +1,+1 only on the Meteogram plot
+;Nothing is changed in locX,locY in the process of deriving the parameter data values
+;;;;;
+lokY = locY+1
+lokX = locX+1
+;;;;;
+
+
+
+
+
+print ("Meteogram for "+sites(ns)+" site:ns="+ns+" from the "+region+" "+wgrid+" region, Gridpoint: "+lokX+","+lokY+" Lat,Lon: "+wlats(ns)+","+wlons(ns)+" Model elevation: "+round(h,0)+"m AMSL" )
+if (non_metric.eq.1) then
+   fth = h * 3.28084
+   print ("Meteogram for "+sites(ns)+" site:ns="+ns+" from the "+region+" "+wgrid+" region, Gridpoint: "+lokX+","+lokY+" Lat,Lon: "+wlats(ns)+","+wlons(ns)+" Model elevation: "+round(fth,0)+"ft AMSL" )
+end if
+;   print ("Meteogram for "+sites(ns)+" site:ns="+ns+" from the "+region+" "+wgrid+" grid at point "+locY+" "+locX+" "+wlons(ns)+" "+wlats(ns)+" model elevation:"+round(h,0)+"m ASL" )
    print("Pressure surface p "+round(maxp+.5,0)+"mb or "+round(h+.5,0)+"m up to ptop min  p value   "+minp)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 
    ; print the z and pressure levels at which blip winds are being reported.
@@ -1232,7 +1345,13 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
       lwstar=floattointeger(round(wstar(:,locY,locX),0))
       mwstar=decimalPlaces((wstar(:,locY,locX)), 1, True)  ; shea utils has this function decimalplaces(x,places,true for round false for truncate)
 ;      mwstar=decimalPlaces((wstar(:,locY,locX)), 1, True)+" m/s"   ; shea utils has this function decimalplaces(x,places,true for round false for truncate) 
+      ftwstar=decimalPlaces((wstar(:,locY,locX)*196.85), 0, True)
+
       swstartxt=mwstar
+
+      if (non_metric.eq.1) then
+        swstartxt=ftwstar
+      end if
 
       ; swstartxt=mwstar+"m/s"                       ; choose your units for top of columns.
       ; swstartxt=lwstar+"fpm"                       ; choose fpm unit
@@ -1495,7 +1614,7 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    
    ; Label bar resources
 
-   res2D@lbTitleFont = 4
+   res2D@lbTitleFont = 21
    res2D@lbAutoManage = False                         ; test tjo see discussion on ncl-talk
    res2D@lbRightMarginF = 0.0
    res2D@lbJustification = "topleft"
@@ -1607,6 +1726,11 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    y_meters_minor = ispan(0,10000,100)
    y_meters_minor_p = linint1_Wrap (round(z(0,:,locY,locX),0),plevels, False, y_meters_minor, 0)
 
+   y_feet = ispan (0,30000,500)
+   y_feet_p = linint1_Wrap (round(zft(0,:,locY,locX),0),plevels, False, y_feet, 0)
+   y_feet_minor = ispan(0,10000,250)
+   y_feet_minor_p = linint1_Wrap (round(zft(0,:,locY,locX),0),plevels, False, y_feet_minor, 0)
+
    res2D@tmYRLabelFuncCode    = "~"
    res2D@tmYRLabelFont        = 21
    res2D@tmYROn               = True
@@ -1614,10 +1738,19 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    res2D@tmYRMode             = "Explicit"
    res2D@tmYRBorderOn         = True
    ;  res2D@tmYRLabels           = feets(:ptop-1:ystride) ; TJ
-   res2D@tmYRLabels           = y_meters+" m"
+   if (non_metric.eq.0) then
+      res2D@tmYRLabels           = y_meters+" m"
+      res2D@tmYRValues           = y_meters_p
+      res2D@tmYRMinorValues      = y_meters_minor_p
+   end if
+
+   if (non_metric.eq.1) then
+      res2D@tmYRLabels           = y_feet+"'"
+      res2D@tmYRValues           = y_feet_p
+      res2D@tmYRMinorValues      = y_feet_minor_p
+   end if
+
    ;  res2D@tmYRValues           = theselevels(::ystride) ; plevels;(::ystride) ; TJ
-   res2D@tmYRValues           = y_meters_p   
-   res2D@tmYRMinorValues      = y_meters_minor_p
    res2D@tmYRLabelFontHeightF = .012
    res2D@tmYRMajorLengthF     = .01
    res2D@tmYRLabelDeltaF      = -0.2        ; TJ
@@ -1765,8 +1898,18 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
       sfcwind0dir = sfcwind0dir_multitime(:,locY,locX)
       sfcwind0spd= new(numtimes,float)
       sfcwind0spd = sfcwind0spd_multitime(:,locY,locX)*3.6  ;m/s to km/h
+      if (non_metric.eq.1) then
+         sfcwind0spd = sfcwind0spd_multitime(:,locY,locX)*2.23694 ;m/s to mph
+      end if
    end if
 ;;;;; 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;
+   if (show_pfd.ne.0) then
+      pfd = pfd_day(locY,locX)
+   end if
+;;;;;;;;;;;;;;;;;;;;;;;
 
    if (show_this_rain.ne.0) then                    ; this might be generalizable to all getblips, but for now make it specific to rain1
       do i=0,numtimes-1
@@ -2011,7 +2154,9 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    cloud       = NhlNewMarker(wks, mstring, fontnum, xoffset, yoffset, ratio, size, angle)      ; puffy cloud
    ceilingmrk  = NhlNewMarker(wks, "U", 19, xoffset, yoffset, ratio, 1.5, angle)
    rogallo     =NhlNewMarker(wks, "B", 37, xoffset, yoffset,   1, 1, 180)  			 ; rogallo wing head on
-   ;paragl     = NhlNewMarker(wks, "6", 20, xoffset, yoffset, tall, 1, 270)
+   if (use_paraglider.eq.1) then
+      paragl     = NhlNewMarker(wks, "6", 20, xoffset, yoffset, tall, 0.5, 270)
+   end if
    snowflake   = NhlNewMarker(wks, "q", 37, xoffset, tallyoffset, 1, 1, 0)
 
    sun   = NhlNewMarker(wks, "l", 37, xoffset, tallyoffset, 1, 1, 0)
@@ -2051,7 +2196,11 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    mkres3@gsMarkerSizeF      = 0.025   
    mkres3@gsMarkerColor      = "blue"
    mkres3@gsMarkerThicknessF = 3
-   mkres3@gsMarkerIndex      = rogallo
+   if (use_paraglider.eq.1) then
+      mkres3@gsMarkerIndex      = paragl
+   else
+      mkres3@gsMarkerIndex      = rogallo
+   end if
 
    ; Freezing level marker
 
@@ -2102,6 +2251,9 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    uv_res@vcRefAnnoOrthogonalPosF = 0.07
    uv_res@vcRefAnnoString2On  = True
    uv_res@vcRefAnnoString1 = "15 km/h"
+   if (non_metric.eq.1) then
+        uv_res@vcRefAnnoString1 = "13-17 kts"
+   end if
    uv_res@vcRefAnnoString2  = "Wind"
    uv_res@vcRefAnnoExplicitMagnitudeF = 15
    uv_res@vcRefLengthF     	   = 0.025                             ; .04 set length of ref vector
@@ -2155,42 +2307,63 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    gsres@gsFill = False
    gsn_polyline_ndc(wks,cirx,ciry,gsres)  ; Draw a filled polygon.
 
-   wrf_version_file = BASEDIR + "/bin/WRF_VERSION.txt"
-   wrf_version = ""
-   if ( fileexists(wrf_version_file) ) then 
-      wrf_version = readAsciiHead(wrf_version_file,1)
-   end if 
+;   wrf_version_file = BASEDIR + "/bin/WRF_VERSION.txt"
+;   wrf_version = ""
+;   if ( fileexists(wrf_version_file) ) then 
+;      wrf_version = readAsciiHead(wrf_version_file,1)
+;   end if 
 
 
    timestamp=systemfunc("date +%d' '%b' '%Y' at '%H:%M' '%Z")
-   timestamp="~F14~~Z60Q~Produced on "+timestamp+"~F14~ by www.blipmaps.nl - WRF:3.6.1" 
+   timestamp="~F21~~Z65Q~Produced on "+timestamp+" - www.blipmaps.nl - WRF"+wrf_version+" - Meteogram: "+meteogram_version
    timestampxNDC = .100     
    timestampyNDC = .010
 
-;   timestamp2="~F14~~Z40Q~Lat: "+wlats(ns)+" - Long: "+wlons(ns)+" - Quota modello: "+round(h,0)+"m AMSL"
- timestamp2="~F14~~Z40Q~Meteogram for "+sites(ns)+" from the "+region+" "+wgrid+"region, Gridpoint: "+locX+","+locY+" Lat,Lon: "+wlats(ns)+","+wlons(ns)+" Model elevation: "+round(h,0)+"m AMSL"
+
+;;;;
+;At blipmaps.nl we also run a click-on-the-map Blipspot to see the parameter data values behind the maps
+;The Lat,Lon of the Blipspot and the Meteogram are the same and the data derived from the parameter data files is also the same.
+;But the locX,locY gridpointnumbers of Meteogram are -1,-1 compared to the Blipspot
+;Therefore the gridpointnumbers are increased +1,+1 only on the Meteogram plot
+;Nothing is changed in locX,locY in the process of deriving the parameter data values
+;;;;;
+lokY = locY+1
+lokX = locX+1
+;;;;;
+
+;   timestamp2="~F21~~Z40Q~Lat: "+wlats(ns)+" - Long: "+wlons(ns)+" - Quota modello: "+round(h,0)+"m AMSL"
+ timestamp2="~F21~~Z50Q~Meteogram for "+sites(ns)+" from the "+region+" "+wgrid+" region, Gridpoint: "+lokX+","+lokY+" Lat,Lon: "+wlats(ns)+","+wlons(ns)+" Model elevation: "+round(h,0)+"m AMSL"
+ if (non_metric.eq.1) then
+    timestamp2="~F21~~Z50Q~Meteogram for "+sites(ns)+" from the "+region+" "+wgrid+" region, Gridpoint: "+lokX+","+lokY+" Lat,Lon: "+wlats(ns)+","+wlons(ns)+" Model elevation: "+round(fth,0)+"ft AMSL"
+ end if
 
    timestamp2xNDC = .100
    timestamp2yNDC = .030
 
-;   legend1="~F14~~Z60Q~CAPE = Convective Available Potential Energy"
+;   legend1="~F21~~Z65Q~CAPE = Convective Available Potential Energy"
 ;   gsn_text_ndc(wks,legend1,0.11,0.09,lbtxtres)
-;   legend2="~F14~~Z60Q~Values between 300 and 1000 indicate possibility of isolated temporary thunderstorm"
+;   legend2="~F21~~Z65Q~Values between 300 and 1000 indicate possibility of isolated temporary thunderstorm"
 ;   gsn_text_ndc(wks,legend2,0.11,0.075,lbtxtres)
-;   legend3="~F14~~Z60Q~Values between 1000 and 2000 indicate good chance of well developed thunderstorms"
+;   legend3="~F21~~Z65Q~Values between 1000 and 2000 indicate good chance of well developed thunderstorms"
 ;   gsn_text_ndc(wks,legend3,0.11,0.06,lbtxtres)
-;   legend4="~F14~~Z60Q~Values above 2000 indicate high possibility of (strong) thunderstorms"
+;   legend4="~F21~~Z65Q~Values above 2000 indicate high possibility of (strong) thunderstorms"
 ;   gsn_text_ndc(wks,legend4,0.11,0.045,lbtxtres)
 
-   legend1="~F14~~Z60Q~    300-1000      CAPE values      1000-2000      Thunderstorm(s)       >2000"
+   legend1="~F21~~Z65Q~CAPE values >300 show on top        300-1000                                  1000-2000                                   >2000"
    gsn_text_ndc(wks,legend1,0.11,0.105,lbtxtres)
-   legend2="~F14~~Z60Q~Isolated temporary       Good chance of well developed         High possibility (strong)"
+   legend2="~F21~~Z65Q~                      Thunderstorm(s):      Isolated temporary    Good chance of well developed    High possibility (strong)"
    gsn_text_ndc(wks,legend2,0.11,0.09,lbtxtres)
-   legend3="~F14~~Z60Q~xxx/xx=winddirection/windspeed in km/h @ 2m AGL"
+   legend3="~F21~~Z65Q~xx% = Normalised Surface Sun                     Cloudbase: White = Cumulus    Dark = OvercastDevelopment"
    gsn_text_ndc(wks,legend3,0.11,0.075,lbtxtres)
-   legend4="~F14~~Z60Q~xx%=Normalised Surface Sun      Cloudbase: White=Cumulus Dark=OvercastDevelopment"
+   legend4="~F21~~Z65Q~xx% = Boundarylayer Cloudcover                  m = lift<1,14m/s incl.cloudbase limits *excl.cloudsuck"
+   if (non_metric.eq.1) then
+      legend4="~F21~~Z65Q~xx% = Boundarylayer Cloudcover                  m = lift<220 fpm incl.cloudbase limits *excl.cloudsuck"
+   end if
    gsn_text_ndc(wks,legend4,0.11,0.06,lbtxtres)
-   legend5="~F14~~Z60Q~xx%=Boundarylayer Cloudcover    m=lift<1,2m/s incl.cloudbase limits *excl.cloudsuck"
+   legend5= "~F21~~Z65Q~xxx/xx = winddirection/windspeed in km/h @ 2m AGL"
+   if (non_metric.eq.1) then
+     legend5= "~F21~~Z65Q~xxx/xx = winddirection/windspeed in mph @ 7ft AGL"
+   end if
    gsn_text_ndc(wks,legend5,0.11,0.045,lbtxtres)
 
    ; windbarb5=NhlNewMarker(wks, "b", 37, 0, 0,   1, 1, 0)  			 
@@ -2210,12 +2383,211 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
 ; Turned second timestamp on
    gsn_text_ndc(wks,timestamp2,timestamp2xNDC,timestamp2yNDC,lbtxtres)
 
-; Add extra legends
-   timestamp3="~F14~~Z60Q~m/s* AMSL"
+; Add extra legend for vertical velocity and altitude levels
+   timestamp3="~F21~~Z65Q~m/s* AMSL"
+   if (non_metric.eq.1) then
+      timestamp3="~F21~~Z65Q~fpm* AMSL"
+   end if
    timestamp3xNDC = .905
    timestamp3yNDC = .938
    gsn_text_ndc(wks,timestamp3,timestamp3xNDC,timestamp3yNDC,lbtxtres)
 
+; Add extra legend with potential flight distance
+   if ( show_pfd.ne.0) then
+     timestamp4="~F21~~Z70Q~PFD="
+     timestamp4xNDC = .920
+     timestamp4yNDC = .060
+     gsn_text_ndc(wks,timestamp4,timestamp4xNDC,timestamp4yNDC,lbtxtres)
+     timestamp5="~F21~~Z70Q~"+pfd+" KM"
+     if (non_metric.eq.1) then
+        pfd_miles = pfd/1.6
+        timestamp5="~F21~~Z70Q~"+pfd_miles+" M"
+     end if
+     timestamp5xNDC = .920
+     timestamp5yNDC = .042
+     gsn_text_ndc(wks,timestamp5,timestamp5xNDC,timestamp5yNDC,lbtxtres)
+
+     timestamp6="~F21~~Z65Q~All times"
+     timestamp6xNDC = .920
+     timestamp6yNDC = .190
+     gsn_text_ndc(wks,timestamp6,timestamp6xNDC,timestamp6yNDC,lbtxtres)
+     timestamp7="~F21~~Z65Q~are local"
+     timestamp7xNDC = .920
+     timestamp7yNDC = .172
+     gsn_text_ndc(wks,timestamp7,timestamp7xNDC,timestamp7yNDC,lbtxtres)
+   end if
+
+;;;;;;;;;;;;;;;;;;;;;;
+;SUNRISESET Compute apparent sunrise and sunset times in seconds.
+; Richard Droste reverse engineered the NOAA Excel:
+; (https://www.esrl.noaa.gov/gmd/grad/solcalc/calcdetails.html)
+; 
+; The formulas are from:
+; Meeus, Jean H. Astronomical algorithms. Willmann-Bell, Incorporated, 1991.
+
+PI  = 3.141592653589793 ;get_pi("double")
+deg2rad = PI/180
+rad2deg = 180/PI
+
+; Process input
+lat = wlats;     ; Latitude
+lng = wlons;     ; Longitude
+UTCoff = offset;          ; UTC offset
+
+print ("**********")
+;;;Date for which sunrise and sunset is calculated
+print ("Date for which sunrise and sunset is calculated")
+print ("theYear = "+theYear)
+print ("theMonth = "+theMonth)
+print ("theDay = "+theDay)
+;print ("the site = "+sites(ns))
+;print ("lat = "+lat)
+;print ("lon = "+lng)
+
+J30dec1899 = greg2jul (1899,12,30,0)
+Jdate = greg2jul (theYear,theMonth,theDay,0)
+print ("Jdate = "+Jdate)
+nDays = Jdate-J30dec1899
+print ("nDays = "+nDays)
+
+; Letters correspond to colums in the NOAA Excel
+E = 0.5 ; 12:00:00 Time (hrs past local midnight) is 0.5 Julianday
+print ("E = "+E)
+
+F = nDays+2415018.5+E-UTCoff/24;
+print ("F = "+F)
+
+;F = greg2jul (year,month,day,hour)
+;print ("F = "+F)
+
+G = (F-2451545)/36525;
+print ("G = "+G)
+
+I = mod(280.46646+G*(36000.76983+G*0.0003032),360);
+print ("I = "+I)
+
+J = 357.52911+G*(35999.05029-0.0001537*G);
+print ("J = "+J)
+
+K = 0.016708634-G*(0.000042037+0.0000001267*G);
+print ("K = "+K)
+
+L = sin(deg2rad*(J))*(1.914602-G*(0.004817+0.000014*G))+sin(deg2rad*(2*J))*(0.019993-0.000101*G)+sin(deg2rad*(3*J))*0.000289;
+print ("L = "+L)
+
+M = I+L;
+print ("M = "+M)
+
+P = M-0.00569-0.00478*sin(deg2rad*(125.04-1934.136*G));
+print ("K = "+K)
+
+Q = 23+(26+((21.448-G*(46.815+G*(0.00059-G*0.001813))))/60)/60;
+print ("Q = "+Q)
+
+R = Q+0.00256*cos(deg2rad*(125.04-1934.136*G));
+print ("R = "+R)
+
+T = rad2deg*(asin(sin(deg2rad*(R))*sin(deg2rad*(P))));
+print ("T = "+T)
+
+U = tan(deg2rad*(R/2))*tan(deg2rad*(R/2));
+print ("U = "+U)
+
+V = 4*rad2deg*(U*sin(2*deg2rad*(I))-2*K*sin(deg2rad*(J))+4*K*U*sin(deg2rad*(J))*cos(2*deg2rad*(I))-0.5*U*U*sin(4*deg2rad*(I))-1.25*K*K*sin(2*deg2rad*(J)));
+print ("V = "+V)
+
+W = rad2deg*(acos(cos(deg2rad*(90.833))/(cos(deg2rad*(lat(ns)))*cos(deg2rad*(T)))-tan(deg2rad*(lat(ns)))*tan(deg2rad*(T))));
+print ("W = "+W)
+
+X = (720-4*lng(ns)-V+UTCoff*60)/1440;
+print ("X = "+X)
+;X = (720-4*lng-V+UTCoff*60)*60
+;print ("X = "+X)
+
+Y = (X*1440-W*4)/1440
+print ("Y = "+Y)
+
+Z = (X*1440+W*4)/1440
+print ("Z = "+Z)
+
+AB = Y*86400
+print ("AB = "+AB)
+
+AC = AB/(60*60)
+print ("AC = "+AC)
+
+AD = tointeger(AC)
+print ("AD = "+AD)
+
+AE = AB-(AD*60*60)
+print ("AE = "+AE)
+
+AF = AE/60
+print ("AF = "+AF)
+
+AG = tointeger(AF)
+print ("AG = "+AG)
+
+AH = AB-(AD*60*60)-AG*60
+print ("AH = "+AH)
+
+AI = round(AH,0)
+print ("AI = "+AI)
+
+BB = Z*86400
+print ("BB = "+BB)
+
+BC = BB/(60*60)
+print ("BC = "+BC)
+
+BD = tointeger(BC)
+print ("BD = "+BD)
+
+BE = BB-(BD*60*60)
+print ("BE = "+BE)
+
+BF = BE/60
+print ("BF = "+BF)
+
+BG = tointeger(BF)
+print ("BG = "+BG)
+
+BH = BB-(BD*60*60)-BG*60
+print ("BH = "+BH)
+
+BI = round(BH,0)
+print ("BI = "+BI)
+
+print ("Sunrise = "+AD+":"+AG+":"+AI)
+print ("Sunset = "+BD+":"+BG+":"+BI)
+
+
+; Add extra legend for sunrise and sunset
+   timestamp8="~F21~~Z65Q~Sunrise"
+   timestamp8xNDC = .920
+   timestamp8yNDC = .138
+   gsn_text_ndc(wks,timestamp8,timestamp8xNDC,timestamp8yNDC,lbtxtres)
+if (AG.le.9) then
+   timestamp9= "~F21~~Z65Q~+/-0"+AD+":0"+AG
+else
+   timestamp9= "~F21~~Z65Q~+/-0"+AD+":"+AG
+end if
+   timestamp9xNDC = .920
+   timestamp9yNDC = .120
+   gsn_text_ndc(wks,timestamp9,timestamp9xNDC,timestamp9yNDC,lbtxtres)
+   timestamp10="~F21~~Z65Q~Sunset"
+   timestamp10xNDC = .920
+   timestamp10yNDC = .102
+   gsn_text_ndc(wks,timestamp10,timestamp10xNDC,timestamp10yNDC,lbtxtres)
+if (BG.le.9) then
+   timestamp11= "~F21~~Z65Q~+/-"+BD+":0"+BG
+else
+   timestamp11= "~F21~~Z65Q~+/-"+BD+":"+BG
+end if
+   timestamp11xNDC = .920
+   timestamp11yNDC = .084
+   gsn_text_ndc(wks,timestamp11,timestamp11xNDC,timestamp11yNDC,lbtxtres)
+;;;;;;;;;;;;;;;;;;;;;;
 
    ; Create the lapse_plot object, colored backgrounds
 
@@ -2324,6 +2696,7 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
 
    if (show_wing.ne.0  ) then
       marker3 = gsn_add_polymarker(wks,xy_plot,taus,hgldj_p,mkres3)         ; hgldj_p max soar w/clouds sideways crescent moons
+;      print ("PG X = "+taus+" PG Y = "+hgldj_p) ; find me here
    end if
 
    if (show_pbl.ne.0) then
@@ -2378,7 +2751,7 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    ;draw(xy_plot)
 
    if (show_rh.ne.0)
-;    rhmsg="~F14~~Z60Q~RH Cut "+rhcut+"%"
+;    rhmsg="~F21~~Z65Q~RH Cut "+rhcut+"%"
 ;    gsn_text_ndc(wks,rhmsg,.800,timestampyNDC,lbtxtres )
       rel_humd=gsn_contour(wks,rhgrid,hum_res)
       draw(rel_humd)
@@ -2494,7 +2867,7 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
             mkresSun@gsMarkerIndex      = sun100
             mkresSun@gsMarkerColor      = "gray" 
             mkresSun@gsMarkerSizeF      = 0.032
-            gsn_polymarker(wks,xy_plot,taus(i),theselevels(ptop-4),mkresSun)
+            gsn_polymarker(wks,xy_plot,taus(i),theselevels(ptop-round((ptop/10),3)),mkresSun)
             mkresSun@gsMarkerSizeF      = 0.03
             mkresSun@gsMarkerColor      = "yellow" 
             mkresSun@gsMarkerIndex      = sun0
@@ -2522,7 +2895,7 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
             if ( sfcsunpct(i).gt.80 ) then 
                mkresSun@gsMarkerIndex      = sun100
             end if 
-            gsn_polymarker(wks,xy_plot,taus(i),theselevels(ptop-4),mkresSun)
+            gsn_polymarker(wks,xy_plot,taus(i),theselevels(ptop-round((ptop/10),3)),mkresSun)
 
 ; Added next line
 ; when missing (-999 in blipspot) set it to zero!
@@ -2530,8 +2903,8 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
                sfcsunpct(i) = 0
             end if 
 
-            gsn_text(wks,xy_plot,sprintf("%.0f%%",sfcsunpct(i)),taus(i),theselevels(ptop-3),txresSun)
-
+            sfcsuntxt_y = theselevels(ptop-round((ptop/10),3)) - ((round((ptop/10),3) -1 ) * 5) ; adjust text offset for level size
+            gsn_text(wks,xy_plot,sprintf("%.0f%%",sfcsunpct(i)),taus(i),sfcsuntxt_y,txresSun)
          end if
       end if
    end do
@@ -2543,26 +2916,40 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    txresSfcwind@txFontHeightF = 0.008
    txresSfcwind@txPerimOn     = True
    txresSfcwind@txBackgroundFillColor = "white"
+   txresSfcwind@gsClipOn           = False         ;symbols may overhang edges of the viewport.
+
+   if (ptop.lt.40) then
+      txresSfcwinf_y_offset = (theselevels(0) - theselevels(1)) *0.5
+   else
+      txresSfcwinf_y_offset = 0
+   end if
 
    do i=0,numtimes-1
        if (show_sfcwind.ne.0) then
-            gsn_text(wks,xy_plot,sprintf("%.0f",sfcwind0dir(i))+"/"+sprintf("%.0f",sfcwind0spd(i)),taus(i),theselevels(1),txresSfcwind)
+           if ( .not.ismissing(sfcwind0dir(i)).and.sfcwind0dir(i).ge.0.and.sfcwind0dir(i).le.360 )then 
+             if ( .not.ismissing(sfcwind0dir(i)).and.sfcwind0dir(i).le.9 ) then
+               gsn_text(wks,xy_plot,"00"+sprintf("%.0f",sfcwind0dir(i))+"/"+sprintf("%.0f",sfcwind0spd(i)),taus(i),(theselevels(1)+txresSfcwinf_y_offset),txresSfcwind)
+             else
+               if ( .not.ismissing(sfcwind0dir(i)).and.sfcwind0dir(i).le.99 ) then
+	         gsn_text(wks,xy_plot,"0"+sprintf("%.0f",sfcwind0dir(i))+"/"+sprintf("%.0f",sfcwind0spd(i)),taus(i),(theselevels(1)+txresSfcwinf_y_offset),txresSfcwind)
+               else
+	         gsn_text(wks,xy_plot,sprintf("%.0f",sfcwind0dir(i))+"/"+sprintf("%.0f",sfcwind0spd(i)),taus(i),(theselevels(1)+txresSfcwinf_y_offset),txresSfcwind)
+               end if
+             end if
+           end if
        end if
    end do
 
-
-
-
    ; Draw the instability caption (.102 .024 puts the caption at left border of colored bar) 
 
-   instability_caption = "~F14~~Z60Q~Unstable                 Conditional Instability                      Stable                    Inverted"
+   instability_caption = "~F21~~Z65Q~Unstable                                          Conditional Instability                                             Stable                                             Inverted"
    lbtxtres@txFontHeightF = 0.015
    gsn_text_ndc ( wks, instability_caption, .106, .12, lbtxtres )  ; was .113, .024 for bottom of box
 
    ; Temperature contour lines if desired.
 
    if (show_temp.ne.0) then
-      if (tmp_units.eq.1) then 
+      if (non_metric.eq.1) then 
          tcloc=((tkloc-273.15)*1.8)+32         ; Farenheight, set tmp_units=0 for Celsius
       else
          tcloc=tkloc-273.15                    ; Celsius
@@ -2574,10 +2961,18 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
 
       tc_res                = res2D
       tc_res@cnLevelSelectionMode = "ExplicitLevels"	; manually set the contour levels with the following 3 resources
-      tc_res@cnLevels    = (/ -10.,0.0,10.,20.,30./)   ; set levels
+      if (non_metric.eq.1) then
+         tc_res@cnLevels    = (/ 20.,30.,40.,50.,60.,70.,80.,90.,100./)   ; set non-metric levels
+      else
+         tc_res@cnLevels    = (/ -10.,0.0,10.,20.,30./)   ; set levels
+      end if 
       tc_res@cnLineLabelInterval        = 1 
       tc_res@cnExplicitLineLabelsOn = True
-      tc_res@cnLineLabelStrings  = (/ "-10~S~o","0~S~o","10~S~o","20~S~o","30~S~o"/) 
+      if (non_metric.eq.1) then
+         tc_res@cnLineLabelStrings  = (/ "20~S~o","30~S~o","40~S~o","50~S~o","60~S~o","70~S~o","80~S~o","90~S~o","100~S~o"/)
+      else
+         tc_res@cnLineLabelStrings  = (/ "-10~S~o","0~S~o","10~S~o","20~S~o","30~S~o"/)
+      end if
       tc_res@cnLineDashSegLenF          = 0.18          ; assist in controlling concentration
       tc_res@cnLineLabelBackgroundColor = -1
       tc_res@cnLineLabelFontColor  = "white"
@@ -2913,6 +3308,7 @@ if (isvar("feets"))
 end if
 
         delete(filecommand1)
+        delete(filecommand2)
         delete(freezelevel)
         delete(fs)
 
