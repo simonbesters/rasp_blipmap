@@ -26,6 +26,8 @@
 23,Hilversum,d2,5.1470,52.1920,
 24,Biddinghuizen,d2,5.6742,52.4292,
 25,Noordkop,d2,5.0056,52.8959,
+26,Schiedam,d2,4.38301,51.91280,
+27,KNMI,d2,5.17724,52.10044,
 #
 #101-200 Belgium
 101,Keiheuvel_Balen,d2,5.2208,51.1806,
