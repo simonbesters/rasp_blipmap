@@ -1,0 +1,10 @@
+70c70,71
+<           ."\&dir=\%2Fgfs.$curdate/$runTime";
+---
+>           ."\&dir=\%2Fgfs.$curdate/$runTime"
+> 	  ."%2Fatmos";
+86c87,88
+<         ."\&dir=\%2Fgfs.$curdate/$runTime";
+---
+>         ."\&dir=\%2Fgfs.$curdate/$runTime"
+> 	."%2Fatmos";

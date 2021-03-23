@@ -175,6 +175,10 @@ VOLUME ["/root/rasp/NETHERLANDS/OUT/", "/root/rasp/NETHERLANDS/LOG/","/root/rasp
 COPY runRasp.sh meteogram.ncl sitedata.ncl ${BASEDIR}/bin/
 COPY logo.png ${BASEDIR}/
 
+# update the url in ftp2u_subregion.pl (we should do this smarter)
+COPY url_update_20210323.patch ${BASEDIR}/
+RUN patch bin/ftp2u_subregion.pl url_update_20210323.patch
+
 #Run RASP, move the images to the final directory and copy some extra log files
 CMD ["runRasp.sh","NETHERLANDS"]
 
