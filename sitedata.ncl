@@ -1,4 +1,4 @@
-#sitedata.nl version 20210118
+#sitedata.ncl version 20210327
 #
 #1-100 Netherlands
 1,Terlet,d2,5.9233,52.0567,
@@ -28,6 +28,8 @@
 25,Noordkop,d2,5.0056,52.8959,
 26,Schiedam,d2,4.38301,51.91280,
 27,KNMI,d2,5.17724,52.10044,
+28,Midden-Zeeland,d2,3.7306,51.5127,
+29,Texel,d2,4.8306,53.1162,
 #
 #101-200 Belgium
 101,Keiheuvel_Balen,d2,5.2208,51.1806,
@@ -83,5 +85,5 @@
 402,Maubeuge,d2,4.0330,50.3137,
 403,Cambrai,d2,3.2624,50.1396,
 404,Saint-Quentin-Roupy,d2,3.2057,49.8162,
-405,Arras,d2,2.8032,50.3240,
+#405
 406,Lille_Bondues,d2,3.0761,50.6873,
