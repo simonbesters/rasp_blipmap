@@ -26,11 +26,13 @@ RUN dnf update -y && dnf install -y \
   mailx \
   findutils \
   ImageMagick \
+  perl-core \
   perl-CPAN \
   ncl \
   netcdf \
   libpng \
   libjpeg-turbo \
+  perl-Test-Harness \
   which \
   patch \
   vim \
