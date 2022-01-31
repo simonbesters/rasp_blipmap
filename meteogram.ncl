@@ -8,8 +8,15 @@
 ; Add your meteogram locations to the sitedata.ncl file, for example 1,Terlet,d2,5.9233,52.0567,
 
 ; Document your changes and change the version number. BM stands for Blipmaps
-meteogram_version = "BM20210209"
-wrf_version = "3.6.1"
+meteogram_version = "BM20220108"
+wrf_version = "4.3"
+
+; Changes in BM20220108
+; -Changed to wrf version 4.3
+; -Removed ora solare part
+; -Removed print messages while calculating sunrise and sunset
+; -Added local standard time to deal with timezone issues in Australia
+; -Changed code for the text version of the date and get the correct day of the week
 
 ; Changes in BM20210209 - ABC
 ; -Added non-metric conversion option
@@ -75,7 +82,7 @@ non_metric = 0
 use_paraglider = 0
 
 if (.not.isvar("DOMAIN")) then
-   print("Usage: windgramtt.ncl DOMAIN=domainname SITEDATA=sitedata.ncl [ptop=nn] [rhcut = nn ] [show_[xxx]=[0|1]]")
+   print("Usage: meteogram.ncl DOMAIN=domainname SITEDATA=sitedata.ncl [ptop=nn] [rhcut = nn ] [show_[xxx]=[0|1]]")
    exit
 end if
 
@@ -688,7 +695,8 @@ if ( use_only_hours.eq.1 ) then
    filecommand1= "ls $BASEDIR/"+region+"/wrfout_d02_* | egrep -v ':30|:03:|04:|05:|06:|17:|18:'"  ; default CUCCO set at top
 else
 ;   filecommand1= "ls $BASEDIR/"+region+"/wrfout_d02_* | egrep -v ':03:|04:|05:|06:|17:|18:'"  ; default CUCCO set at top
-   filecommand1= "ls $BASEDIR/"+region+"/wrfout_d02_* | egrep -v ':03:|04:|05:'"  ; default CUCCO set at top
+;   filecommand1= "ls $BASEDIR/"+region+"/wrfout_d02_* | egrep -v ':03:|04:|05:'"  ; default CUCCO set at top
+   filecommand1= "ls $BASEDIR/"+region+"/wrfout_d02_*"    ; AlanC
 end if
 
 print("")
@@ -833,38 +841,26 @@ do i=0,dims(0)-1
     lst(i) = caption(i)+offset              ; convert UTC to local standard time 
 
    ; make times 12 hour local clock
-
     if ( lst(i).lt.1 )               ; negative numbers add 24
        lst(i)= lst(i)+24
     end if
 
-   ; add ".00" to local time
+   ; deal with timezone issues in Australia.  Should detect timezone for model run and be totally benign when not needed - AlanC
+    if ( lst(i).gt.24 )               ; subtract 24 if next day 
+       lst(i)= lst(i)-24 
+    end if
 
+   ; add ".00" to local time
    lst_string(i) = sprinti("%0.2i", lst(i)) + ":" + chartostring(timesinfiles(i,14:15))
    lst_string_striped(i) = sprinti("%0.2i", lst(i)) +  chartostring(timesinfiles(i,14:15))
    lst_is_hour(i) = str_index_of_substr(lst_string(i),":00",-1)
 
-;;;;;
-; To do: Check if summer/wintertime is correct based on difference WRF (UTC/GMT) time and Parameter data (LST) time
-;;;;;
 
-   ora_solare = True
-
-
-   if ( ora_solare ) then 
-      if ( lst_string(i).eq."09:00") then
-         start_time_index = i - start_time_margin
-      end if
-      if ( lst_string(i).eq."18:30") then
-         stop_time_index = i + start_time_margin
-      end if
-   else
-      if ( lst_string(i).eq."10:00") then
-         start_time_index = i - start_time_margin
-      end if
-      if ( lst_string(i).eq."19:30") then
-         stop_time_index = i + start_time_margin
-      end if
+   if ( lst_string(i).eq."09:00") then
+      start_time_index = i - start_time_margin
+   end if
+   if ( lst_string(i).eq."18:30") then
+      stop_time_index = i + start_time_margin
    end if
 end do
 
@@ -986,7 +982,7 @@ if ( .not. isvar("vhf") ) then
 
    do i=0,numtimes-1
          NCL_JACK_FORTRAN::minlimit2d( vhf(i,:,:), 0.0, numx,numy )
-         vhf(i,:,:) = hfx(	i,:,:) +  0.000245268*(tc(i,0,:,:)+273.16)*vhf(i,:,:)
+         vhf(i,:,:) = hfx(i,:,:) +  0.000245268*(tc(i,0,:,:)+273.16)*vhf(i,:,:)
    end do;      
 
 end if  ; That should fully populate vhf    
@@ -1040,17 +1036,29 @@ XLAT  = b->XLAT(0,:,:)
 XLONG = b->XLONG(0,:,:)
 
 
+; Change code for the text version of the date and get the correct day of the week - AlanC
+dq=str_get_dq() 
+date_str=dq+timesinfiles(1,0:9)+" "+timesinfiles(1,11:15)+":00 -0000"+dq 
+unix_date=systemfunc("date --date="+date_str +" +'%s'") 
+unix_offset=(stringtoint(offset)*3600) 
+local_unix_date=(stringtoint(unix_date)+unix_offset) 
+day=systemfunc("date -d @"+local_unix_date+" +'%Y-%m-%d'") 
+plotday=systemfunc("date --date="+day+" +%d' '%b' '%Y") 
+ 
+day_ch=stringtochar(day) 
+theYear = stringtointeger(day_ch(0:3)) 
+theMonth = stringtointeger(day_ch(5:6)) 
+theDay  = stringtointeger(day_ch(8:9))
 
 
-day=chartostring(timesinfiles(1,0:9))
-plotday=systemfunc("date --date="+day+" +%d' '%b' '%Y")
-print ("Plotday is "+plotday)
-print ("For day "+day+" for "+region+" numtimes is number of times available = "+numtimes)  ; leave in report
+;day=chartostring(timesinfiles(1,0:9))
+;plotday=systemfunc("date --date="+day+" +%d' '%b' '%Y")
+;print ("Plotday is "+plotday)
+;print ("For day "+day+" for "+region+" numtimes is number of times available = "+numtimes)  ; leave in report
 
-
-theYear = stringtointeger(chartostring(timesinfiles(1,0:3))) 
-theMonth = stringtointeger(chartostring(timesinfiles(1,5:6)))
-theDay  = stringtointeger(chartostring(timesinfiles(1,8:9)))
+;theYear = stringtointeger(chartostring(timesinfiles(1,0:3))) 
+;theMonth = stringtointeger(chartostring(timesinfiles(1,5:6)))
+;theDay  = stringtointeger(chartostring(timesinfiles(1,8:9)))
 
 theWeekNumber = day_of_week(theYear,theMonth,theDay)
 theDayName = dayNames(theWeekNumber)
@@ -2211,7 +2219,7 @@ end if
    mkres4@gsMarkerIndex      = snowflake
 
 
-   ; Dark cluds
+   ; Dark clouds
    mkres5                    = mkres1
    mkres5@gsMarkerColor      = "dimgray"    
    mkres5@gsMarkerSizeF      = 0.035  
@@ -2452,115 +2460,41 @@ print ("nDays = "+nDays)
 
 ; Letters correspond to colums in the NOAA Excel
 E = 0.5 ; 12:00:00 Time (hrs past local midnight) is 0.5 Julianday
-print ("E = "+E)
-
 F = nDays+2415018.5+E-UTCoff/24;
-print ("F = "+F)
-
-;F = greg2jul (year,month,day,hour)
-;print ("F = "+F)
-
 G = (F-2451545)/36525;
-print ("G = "+G)
-
 I = mod(280.46646+G*(36000.76983+G*0.0003032),360);
-print ("I = "+I)
-
 J = 357.52911+G*(35999.05029-0.0001537*G);
-print ("J = "+J)
-
 K = 0.016708634-G*(0.000042037+0.0000001267*G);
-print ("K = "+K)
-
 L = sin(deg2rad*(J))*(1.914602-G*(0.004817+0.000014*G))+sin(deg2rad*(2*J))*(0.019993-0.000101*G)+sin(deg2rad*(3*J))*0.000289;
-print ("L = "+L)
-
 M = I+L;
-print ("M = "+M)
-
 P = M-0.00569-0.00478*sin(deg2rad*(125.04-1934.136*G));
-print ("K = "+K)
-
 Q = 23+(26+((21.448-G*(46.815+G*(0.00059-G*0.001813))))/60)/60;
-print ("Q = "+Q)
-
 R = Q+0.00256*cos(deg2rad*(125.04-1934.136*G));
-print ("R = "+R)
-
 T = rad2deg*(asin(sin(deg2rad*(R))*sin(deg2rad*(P))));
-print ("T = "+T)
-
 U = tan(deg2rad*(R/2))*tan(deg2rad*(R/2));
-print ("U = "+U)
-
 V = 4*rad2deg*(U*sin(2*deg2rad*(I))-2*K*sin(deg2rad*(J))+4*K*U*sin(deg2rad*(J))*cos(2*deg2rad*(I))-0.5*U*U*sin(4*deg2rad*(I))-1.25*K*K*sin(2*deg2rad*(J)));
-print ("V = "+V)
-
 W = rad2deg*(acos(cos(deg2rad*(90.833))/(cos(deg2rad*(lat(ns)))*cos(deg2rad*(T)))-tan(deg2rad*(lat(ns)))*tan(deg2rad*(T))));
-print ("W = "+W)
-
 X = (720-4*lng(ns)-V+UTCoff*60)/1440;
-print ("X = "+X)
-;X = (720-4*lng-V+UTCoff*60)*60
-;print ("X = "+X)
-
 Y = (X*1440-W*4)/1440
-print ("Y = "+Y)
-
 Z = (X*1440+W*4)/1440
-print ("Z = "+Z)
-
 AB = Y*86400
-print ("AB = "+AB)
-
 AC = AB/(60*60)
-print ("AC = "+AC)
-
 AD = tointeger(AC)
-print ("AD = "+AD)
-
 AE = AB-(AD*60*60)
-print ("AE = "+AE)
-
 AF = AE/60
-print ("AF = "+AF)
-
 AG = tointeger(AF)
-print ("AG = "+AG)
-
 AH = AB-(AD*60*60)-AG*60
-print ("AH = "+AH)
-
 AI = round(AH,0)
-print ("AI = "+AI)
-
 BB = Z*86400
-print ("BB = "+BB)
-
 BC = BB/(60*60)
-print ("BC = "+BC)
-
 BD = tointeger(BC)
-print ("BD = "+BD)
-
 BE = BB-(BD*60*60)
-print ("BE = "+BE)
-
 BF = BE/60
-print ("BF = "+BF)
-
 BG = tointeger(BF)
-print ("BG = "+BG)
-
 BH = BB-(BD*60*60)-BG*60
-print ("BH = "+BH)
-
 BI = round(BH,0)
-print ("BI = "+BI)
-
 print ("Sunrise = "+AD+":"+AG+":"+AI)
 print ("Sunset = "+BD+":"+BG+":"+BI)
-
 
 ; Add extra legend for sunrise and sunset
    timestamp8="~F21~~Z65Q~Sunrise"
