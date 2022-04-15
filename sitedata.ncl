@@ -1,4 +1,5 @@
 #sitedata.ncl version 20210327
+# WATCH OUT: sensitive to spaces at the end of the line 
 #
 #1-100 Netherlands
 1,Terlet,d2,5.9233,52.0567,
@@ -42,7 +43,7 @@
 108,Schaffen_Diest,d2,5.0658,51.0042,
 109,Overboelare_Geraardsbergen,d2,3.8639,50.7555,
 110,Wevelgem_Kortrijk,d2,3.2045,50.8172,
-111,Weelde,d2,4.9592,51.3942, 
+111,Weelde,d2,4.9592,51.3942,
 150,Verviers,d2,5.8536,50.5511,
 151,Saint-Hubert,d2,5.4042,50.0358,
 152,Namur,d2,4.7705,50.4897,
