@@ -78,6 +78,8 @@
 225,Witzenhausen,d2,9.8247,51.3500,
 226,Karlstadt_Saupur,d2,9.9714,49.9714,
 227,Oeventrop,d2,8.1444,51.3961,
+228,Wilssche,d2,10.4650,52.5250,
+229,Ansbach_Petersdorf,d2,10.6850,49.3608,
 #
 #301-400 Luxembourg
 301,Useldange,d2,5.9665,49.7682,
