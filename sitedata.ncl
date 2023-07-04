@@ -84,7 +84,6 @@
 231,Lueneburg,d2,10.4586,53.2483,
 232,Grosse_Hoehe,d2,8.5719,52.9858,
 233,Homberg,d2,9.0206,50.7475,
-
 #
 #301-400 Luxembourg
 301,Useldange,d2,5.9665,49.7682,
