@@ -1,0 +1,21 @@
+#!/bin/bash
+# shellcheck disable=SC2034
+FEDORA_VERSION=42
+
+# Image tags
+BASE_IMAGE=blipmaps.nl/base
+WRF_IMAGE=blipmaps.nl/wrf
+# This will be the final image:
+RASP_IMAGE=blipmaps.nl.docker/blipmaps.nl/rasp/rasp
+
+# Versions of WRF and WPS that shall be used. Those must be valid tags in the corresponding GitHub repo
+WRF_VERSION=v4.7.1
+WPS_VERSION=v4.6.0
+
+# Choose the CPU architecture for the machine you are currently using for the build (native should be fine)
+WRF_MARCH_BUILD=native
+# ... and for the one that does the actual simulation runs
+WRF_MARCH_PROD=native
+
+# Your region folder: NL4KMGFS, NL1KMGFS, NL4KMICON or NL1KMICON
+REGION=NL4KMGFS
