@@ -1,10 +1,8 @@
 #Callback after finishing blipmaps.nl run
 
 After running a RASP run, you may want to process the outcome. This docker image is there to do that. We use it for:
-- making a backup of the results on a local NAS
 - uploading the images to the website
 - zipping the files for less bandwidth
-- merging the images for the old interface
 - setting the rights of the files (so that the website can access them)
 - removing of fields in the wrfout files
 - removing the images after the above
@@ -18,7 +16,6 @@ It will then run each script that is named in the variable CALLBACK_<REGION>. In
 E.g. in my .env file I have the following:
 
 targetUrl="rasp@host:/home/rasp/domain/blipmaps.nl/images/"
-backupUrl="rasp@backuphost:/home/rasp/backupdir/"
 CALLBACK_NETHERLANDS=deleteWrfFiles.sh convertImages.sh upload_images.sh backup_images.sh delete_images.sh
 CALLBACK_NL1KM=convertImages.sh convertWrfoutForXbl.sh upload_images.sh backup_images.sh delete_images.sh
 

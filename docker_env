@@ -1,5 +1,3 @@
-#!/bin/bash
-# shellcheck disable=SC2034
 FEDORA_VERSION=42
 
 # Image tags
@@ -17,5 +15,3 @@ WRF_MARCH_BUILD=native
 # ... and for the one that does the actual simulation runs
 WRF_MARCH_PROD=native
 
-# Your region folder: NL4KMGFS, NL1KMGFS, NL4KMICON or NL1KMICON
-REGION=NL4KMGFS

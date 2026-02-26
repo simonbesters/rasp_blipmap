@@ -42,8 +42,8 @@ services:
         WRF_MARCH_PROD: ${WRF_MARCH_PROD}
         REGION: ${REGION}
     volumes:
-      - ../results/OUT:/root/rasp/${REGION}/OUT
-      - ../results/LOG:/root/rasp/${REGION}/LOG
+      - ../results/OUT:/tmp/OUT
+      - ../results/LOG:/tmp/LOG
     environment:
       - START_DAY=${START_DAY:-0}
       - OFFSET_HOUR=${OFFSET_HOUR:-0}

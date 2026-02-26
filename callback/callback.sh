@@ -1,11 +1,10 @@
 #!/bin/bash
 
 # This script expects the following variables to be set. E.g. with:
-# CALLBACK_NETHERLANDS="deleteWrfFiles.sh convertImages.sh upload_images.sh backup_images.sh delete_images.sh"
+# CALLBACK_NETHERLANDS="deleteWrfFiles.sh convertImages.sh upload_images.sh delete_images.sh"
 
-# Optionally you can set the variables below for the scripts upload_images.sh and backup_images.sh
+# Optionally you can set the variables below for the scripts upload_images.sh
 # targetUrl=
-# backupUrl=
 
 callbackDone=callback_done.txt
 

@@ -45,5 +45,5 @@ python3 /root/rasp/bin/rasp2geotiff.py /root/rasp/"${REGION}" &> "${logDir}"/ras
 mv "${regionDir}"/wrf.out "${logDir}"
 mv "${regionDir}"/metgrid.log "${logDir}"
 mv "${regionDir}"/ungrib.log "${logDir}"
-
+mv "${regionDir}"/wrfout_d02_* "${outDir}"
 echo "Started running rasp at ${runDate}_${runTime}, ended at $(date +%Y-%m-%d_%H-%M)"

@@ -2,15 +2,21 @@
 
 function runAreas() {
     for area in ${areas} ; do
-	
-	if [[ ${area} =~ nl1km?? ]] ; then
-	    uploadXblFiles="true";
-	else
-	    uploadXblFiles="false";
-	fi	
-	echo "running area ${area} @ $(date), offset = ${offset}, uploadingXblFiles = ${uploadXblFiles}"
-	/usr/local/bin/docker-compose -f docker-compose.yml run ${area}
-	/usr/local/bin/docker-compose rm -fv
+      region=$(echo "${area}" | cut -d "_" -f 1)
+      start_day=$(echo "${area}" | cut -d "_" -f 2)
+
+      if [[ ${area} =~ NL1KM?? ]] ; then
+          uploadXblFiles="true";
+      else
+          uploadXblFiles="false";
+      fi
+
+      export REGION="${region}"
+      export START_DAY="${start_day}"
+      # shellcheck disable=SC2154
+      export OFFSET_HOUR="${offset}"
+      echo "running area ${REGION} @ $(date), start_day = ${START_DAY}, offset = ${OFFSET_HOUR}, uploadingXblFiles = ${uploadXblFiles}"
+      docker-compose --env-file ./docker_env --env-file ./docker_env"${region}" run --remove-orphans rasp
     done
 }
 
