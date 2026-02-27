@@ -29,15 +29,15 @@ Do the following from within the callback directory:
 
 Build the image:
 ```
-docker-compose -f docker-compose.yml build callback
+docker compose -f docker-compose.yml build callback
 ```
 
 Run the image:
 ```
-docker-compose -f docker-compose.yml up
+docker compose -f docker-compose.yml up
 ```
 
 Run the image as daemon, it will startup after a reboot:
 ```
-docker-compose -f docker-compose.yml up -d
+docker compose -f docker-compose.yml up -d
 ```

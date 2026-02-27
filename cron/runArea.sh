@@ -16,7 +16,7 @@ function runAreas() {
       # shellcheck disable=SC2154
       export OFFSET_HOUR="${offset}"
       echo "running area ${REGION} @ $(date), start_day = ${START_DAY}, offset = ${OFFSET_HOUR}, uploadingXblFiles = ${uploadXblFiles}"
-      docker-compose --env-file ./docker_env --env-file ./docker_env_"${region}" run --remove-orphans rasp
+      docker compose --env-file ./docker_env --env-file ./docker_env_"${region}" run --remove-orphans rasp
     done
 }
 

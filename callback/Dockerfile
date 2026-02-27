@@ -1,6 +1,6 @@
 # This image is supposed to run continuously
-#   docker-compose -f docker-compose.yml build callback
-#   docker-compose -f docker-compose.yml run callback
+#   docker compose -f docker-compose.yml build callback
+#   docker compose -f docker-compose.yml run callback
 
 FROM debian:stable
 
