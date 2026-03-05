@@ -11,8 +11,10 @@ services:
       - OFFSET_HOUR=${offset:-0}
       - targetUrl=${targetUrl:-}
       - uploadXblFiles=${uploadXblFiles:-}
-      - CALLBACK_NETHERLANDS=${CALLBACK_NETHERLANDS:-doNothing.sh}
-      - CALLBACK_NL1KM=${CALLBACK_NL1KM:-doNothing.sh}
+      - CALLBACK_NL4KMGFS=${CALLBACK_NL4KMGFS:-doNothing.sh}
+      - CALLBACK_NL1KMGFS=${CALLBACK_NL1KMGFS:-doNothing.sh}
+      - CALLBACK_NL4KMICON=${CALLBACK_NL4KMICON:-doNothing.sh}
+      - CALLBACK_NL1KMICON=${CALLBACK_NL1KMICON:-doNothing.sh}
     command: [ "/data" ]
     secrets:
       - host_ssh_key

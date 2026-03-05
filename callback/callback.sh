@@ -8,15 +8,15 @@
 
 callbackDone=callback_done.txt
 
-function processPrintoutFile {
+function processRunDirectory {
     rundir=${1}
     . ./parse_directory.sh ${rundir}
     # length = 7
-    # dataDirectory = /tmp/OUT/20210101/2106/NETHERLANDS/0/
-    # basedirectory = /tmp/OUT
+    # dataDirectory = /tmp/results/OUT/20210101_2106_NL4KMGFS_0
+    # basedirectory = /tmp/results/OUT/0210101_2106_NL4KMGFS_0
     # startDate = 20210101
     # startTime = 2106
-    # region = NETHERLANDS
+    # region = NL4KMGFS
     # START_DAY = 0
     variableName="CALLBACK_${region}"
     eval scripts=\$$variableName
@@ -31,10 +31,10 @@ function processPrintoutFile {
 
 dataDir=${1}
 while true ; do
-    printout=$(find ${dataDir} -type f -name "GM.printout" |head -n 1|sed "s|/[^/]*$||")
-    if [ -d "${printout}" -a ! -f ${printout}/${callbackDone} ]; then
-      echo "Processing directory ${dataDir} and found file ${printout} @ $(date)"
-	    processPrintoutFile "${printout}"
+    runDirectory=$(find ${dataDir} -type f -name "GM.printout" |head -n 1|sed "s|/LOG.*$||")
+    if [ -d "${runDirectory}/LOG" ] && [ ! -f "${runDirectory}"/LOG/${callbackDone} ]; then
+      echo "Processing directory ${dataDir} and found file ${runDirectory} @ $(date)"
+	    processRunDirectory "${runDirectory}"
     fi
     sleep 10
 done

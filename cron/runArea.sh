@@ -16,7 +16,11 @@ function runAreas() {
       # shellcheck disable=SC2154
       export OFFSET_HOUR="${offset}"
       echo "running area ${REGION} @ $(date), start_day = ${START_DAY}, offset = ${OFFSET_HOUR}, uploadingXblFiles = ${uploadXblFiles}"
-      docker compose --env-file ./docker_env --env-file ./docker_env_"${region}" run --remove-orphans rasp
+      RUN_PREFIX="$(date '+%Y%m%d')_$(date '+%H%M')_${REGION}_${START_DAY}"
+      mkdir -p /tmp/results/"${RUN_PREFIX}"/OUT
+      mkdir -p /tmp/results/"${RUN_PREFIX}"/LOG
+      echo "RUN_PREFIX=${RUN_PREFIX}" > /tmp/results/${RUN_PREFIX}/run_prefix_env
+      docker compose --env-file ./docker_env --env-file ./docker_env_"${REGION}" --env-file /tmp/results/"${RUN_PREFIX}"/run_prefix_env run --remove-orphans rasp
     done
 }
 

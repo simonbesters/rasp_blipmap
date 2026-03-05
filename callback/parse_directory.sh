@@ -15,20 +15,17 @@
 export dataDirectory=${1}
 
 #determine base directory
-IFS='/' 
+IFS='_'
 read -ra parts <<< "${1}"
 IFS=' '
 length=${#parts[@]}
-export basedirectory=""
-for ((idx=1; idx < $(( ${length} - 4 )) ; idx++)) ; do
-    basedirectory="${basedirectory}/${parts[$idx]}"
-done
 
 #and the rest
 export startDate=${parts[$(( ${length} - 4 ))]}
 export startTime=${parts[$(( ${length} - 3 ))]}
 export region=${parts[$(( ${length} - 2 ))]}
 export START_DAY=${parts[$(( ${length} -1 ))]}
+export basedirectory="$dataDirectory"
 
 echo "Parsed basedirectory = ${basedirectory}"
 # echo "startDate = ${startDate}"

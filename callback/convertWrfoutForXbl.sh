@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ${dataDirectory}
+cd ${dataDirectory}/OUT
 
 # convert wrf files (lower number of parameters) with ncks
 echo "converting wrf files: removing unnecessary parameters for XBL ($(date))"

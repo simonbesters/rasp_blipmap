@@ -705,7 +705,7 @@ if( $GRIBFILE_MODEL eq 'GFS' ) { $GRIBFILE_MODEL = 'GFSN'; }
 ### must be overriden by rasp.site.parameters since also used for anonymous login password
   $ADMIN_EMAIL_ADDRESS = ''; 
 ###### SET USERNAME
-  $USERNAME = $ENV{'LOGNAME'};
+  $USERNAME = $ENV{'LOGNAME'} || $ENV{'USER'} || getpwuid($<);
 ###    These are empirically obtained values - might also depend on no. of model levels ?
 #      The correct value is now determined automatically - See below
   $num_metgrid_levels{'GFSN'} = 27 ;
