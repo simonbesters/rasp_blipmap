@@ -35,7 +35,7 @@ WORKDIR /raspbin
 
 VOLUME ["/data"]
 
-COPY callback.sh convertImages.sh convertWrfoutForXbl.sh delete_images.sh deleteWrfFiles.sh doNothing.sh parse_directory.sh upload_images.sh ${BASEDIR}/raspbin/
+COPY callback.sh convertWrfoutForXbl.sh delete_images.sh deleteWrfFiles.sh doNothing.sh parse_directory.sh upload_images.sh ${BASEDIR}/raspbin/
 
 #Add ssh keys to upload to $targetUrl location
 ARG ssh_prv_key

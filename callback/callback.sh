@@ -33,8 +33,8 @@ dataDir=${1}
 while true ; do
     printout=$(find ${dataDir} -type f -name "GM.printout" |head -n 1|sed "s|/[^/]*$||")
     if [ -d "${printout}" -a ! -f ${printout}/${callbackDone} ]; then
-	echo "Processing directory ${dataDir} and found file ${printout} @ $(date)"
-	processPrintoutFile "${printout}"
+      echo "Processing directory ${dataDir} and found file ${printout} @ $(date)"
+	    processPrintoutFile "${printout}"
     fi
     sleep 10
 done

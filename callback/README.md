@@ -7,7 +7,7 @@ After running a RASP run, you may want to process the outcome. This docker image
 - removing of fields in the wrfout files
 - removing the images after the above
 
-The docker image will (via de docker-compse) look at the /tmp/OUT directory. Every 10 seconds it will determine if there is a directory with the file GM.printout there. If that directory is present, it will assume it is a directory with images and run all the scripts that are necessary.
+The docker image will (via de docker-compose) look at the /tmp/results/OUT directory. Every 10 seconds it will determine if there is a directory with the file GM.printout there. If that directory is present, it will assume it is a directory with images and run all the scripts that are necessary.
 
 It will expect a directory with a name like /tmp/OUT/20210121/1745/NETHERLANDS/0 and parses this format (see script parse_directory.sh).
 

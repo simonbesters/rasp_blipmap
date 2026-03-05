@@ -33,6 +33,7 @@ runGM "${REGION}"
 #Generate the meteogram images
 echo "Running meteogram on $(date)"
 cp /root/rasp/logo.png "${regionDir}"/OUT/logo.png
+# TODO: think about parallelizing this, takes a few minutes
 ncl /root/rasp/GM/meteogram.ncl DOMAIN=\""${REGION}"\" SITEDATA=\"/root/rasp/GM/sitedata.ncl\" &> "${logDir}"/meteogram.out
 
 # Generate title JSONs from data files
