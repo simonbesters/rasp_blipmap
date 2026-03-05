@@ -1,0 +1,6 @@
+targetUrl=davidrasp@dhosts.nl:/home/davidrasp/domains/blipmaps.nl/public_html/
+CALLBACK_NL1KMGFS=convertWrfoutForXbl.sh upload_images.sh delete_images.sh
+CALLBACK_NL1KMICON=convertWrfoutForXbl.sh upload_images.sh delete_images.sh
+CALLBACK_NL4KMGFS=deleteWrfFiles.sh upload_images.sh delete_images.sh
+CALLBACK_NL4KMICON=deleteWrfFiles.sh upload_images.sh delete_images.sh
+

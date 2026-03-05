@@ -14,15 +14,15 @@ if [ ! -z "${targetUrl}" ] ; then
     if [ ${offset} -le ${START_DAY}  ] ; then
 	ACTUAL_START_DAY=$(( ${START_DAY} - ${offset} ));
     fi
-    finalTargetUrl="${targetUrl}/${region}.${ACTUAL_START_DAY}"
+    finalTargetUrl="${targetUrl}/${region}/NL+${ACTUAL_START_DAY}"
 
     #Upload files
     echo "uploading images to ${finalTargetUrl} for ${region}"
-    scp -q -i /run/secrets/host_ssh_key ${dataDirectory}/* ${finalTargetUrl}
+    scp -q -i /run/secrets/host_ssh_key ${dataDirectory}/OUT/* ${finalTargetUrl}
 
     # Create file to let the server know I'm done (so it can unpack the gz file for XBL)
-    echo "Transferred files at $(date)" > ${dataDirectory}/xfer.log
-    scp -q -i /run/secrets/host_ssh_key ${dataDirectory}/xfer.log ${finalTargetUrl}
+    echo "Transferred files at $(date)" > ${dataDirectory}/LOG/xfer.log
+    scp -q -i /run/secrets/host_ssh_key ${dataDirectory}/LOG/xfer.log ${finalTargetUrl}
 else
     echo "NOT uploading, targetUrl not set"
 fi

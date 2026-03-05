@@ -16,8 +16,8 @@ It will then run each script that is named in the variable CALLBACK_<REGION>. In
 E.g. in my .env file I have the following:
 
 targetUrl="rasp@host:/home/rasp/domain/blipmaps.nl/images/"
-CALLBACK_NETHERLANDS=deleteWrfFiles.sh convertImages.sh upload_images.sh backup_images.sh delete_images.sh
-CALLBACK_NL1KM=convertImages.sh convertWrfoutForXbl.sh upload_images.sh backup_images.sh delete_images.sh
+CALLBACK_NETHERLANDS=deleteWrfFiles.sh upload_images.sh delete_images.sh
+CALLBACK_NL1KM=convertWrfoutForXbl.sh upload_images.sh delete_images.sh
 
 ##own scripts
 If you want to add your own script, do not forget to include it in the Dockerfile AND the .env file
@@ -39,5 +39,5 @@ docker compose -f docker-compose.yml up
 
 Run the image as daemon, it will startup after a reboot:
 ```
-docker compose -f docker-compose.yml up -d
+docker compose -f docker-compose.yml --env-file blipmaps.nl_env up -d
 ```
