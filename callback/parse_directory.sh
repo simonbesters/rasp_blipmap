@@ -13,10 +13,11 @@
 # These variables can be used in scripts that do actual work. 
 
 export dataDirectory=${1}
-
+# shellcheck disable=SC2001
+partial=$(echo "${dataDirectory}" | sed "s|^.*/||")
 #determine base directory
 IFS='_'
-read -ra parts <<< "${1}"
+read -ra parts <<< "${partial}"
 IFS=' '
 length=${#parts[@]}
 

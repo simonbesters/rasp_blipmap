@@ -10,7 +10,7 @@ callbackDone=callback_done.txt
 
 function processRunDirectory {
     rundir=${1}
-    . ./parse_directory.sh ${rundir}
+    . ./parse_directory.sh "${rundir}"
     # length = 7
     # dataDirectory = /tmp/results/OUT/20210101_2106_NL4KMGFS_0
     # basedirectory = /tmp/results/OUT/0210101_2106_NL4KMGFS_0
@@ -31,7 +31,7 @@ function processRunDirectory {
 
 dataDir=${1}
 while true ; do
-    runDirectory=$(find ${dataDir} -type f -name "GM.printout" |head -n 1|sed "s|/LOG.*$||")
+    runDirectory=$(find "${dataDir}" -type f -name "GM.printout" |head -n 1|sed "s|/LOG.*$||")
     if [ -d "${runDirectory}/LOG" ] && [ ! -f "${runDirectory}"/LOG/${callbackDone} ]; then
       echo "Processing directory ${dataDir} and found file ${runDirectory} @ $(date)"
 	    processRunDirectory "${runDirectory}"

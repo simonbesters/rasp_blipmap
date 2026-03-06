@@ -1,6 +1,7 @@
 #!/bin/bash
 
-cd ${dataDirectory}/OUT
+# shellcheck disable=SC2154
+cd "${dataDirectory}"/OUT || exit 5
 
 # convert wrf files (lower number of parameters) with ncks
 echo "converting wrf files: removing unnecessary parameters for XBL ($(date))"
