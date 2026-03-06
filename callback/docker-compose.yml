@@ -6,7 +6,7 @@ services:
     build: .
     restart: always
     volumes:
-      - /tmp/results/OUT:/data
+      - /tmp/results:/data
     environment:
       - OFFSET_HOUR=${offset:-0}
       - targetUrl=${targetUrl:-}

@@ -47,4 +47,5 @@ mv "${regionDir}"/wrf.out "${logDir}"
 mv "${regionDir}"/metgrid.log "${logDir}"
 mv "${regionDir}"/ungrib.log "${logDir}"
 mv "${regionDir}"/wrfout_d02_* "${outDir}"
+touch "${logDir}"/done
 echo "Started running rasp at ${runDate}_${runTime}, ended at $(date +%Y-%m-%d_%H-%M)"
