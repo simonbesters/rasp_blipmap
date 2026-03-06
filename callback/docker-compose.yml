@@ -23,9 +23,9 @@ services:
 
 secrets:
   host_ssh_key:
-    file: ~/.ssh/id_ed25519
+    file: ~/.ssh/ssh_key
   host_ssh_pub_key:
-    file: ~/.ssh/id_ed25519.pub
+    file: ~/.ssh/ssh_key.pub
   host_ssh_known_hosts:
     file: ~/.ssh/known_hosts
 
