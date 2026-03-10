@@ -44,6 +44,7 @@ services:
     volumes:
       - /tmp/results/${RUN_PREFIX}/OUT:/root/rasp/${REGION}/OUT
       - /tmp/results/${RUN_PREFIX}/LOG:/root/rasp/${REGION}/LOG
+    shm_size: '2gb'
     environment:
       - START_DAY=${START_DAY:-0}
       - OFFSET_HOUR=${OFFSET_HOUR:-0}

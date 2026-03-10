@@ -33,7 +33,7 @@ RUN cd ${BASEDIR}/build/WRF \
   && sh patch_registry.sh \
   && printf "33\n1\n" | ./configure \
   && sh patch_configure_wrf.sh ${WRF_MARCH} \
-  && ./compile -j 8 em_real
+  && ./compile -j 16 em_real
 
 # Must be built after WRF
 COPY patch_configure_wps.sh ${BASEDIR}/build/WPS/

@@ -4,3 +4,11 @@
 ssh_key
 ssh_key.pub
 .env
+
+# Python virtual environments
+icon-d2/venv/
+__pycache__/
+*.pyc
+
+# Symlinks to results (not part of repo)
+NL+*

@@ -1232,6 +1232,12 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
    locX = locij(0)
    locY = locij(1)
 
+   ; Skip sites that fall outside the domain grid
+   if (locX .lt. 0 .or. locX .ge. numx .or. locY .lt. 0 .or. locY .ge. numy) then
+      print("WARNING: Site "+sites(ns)+" (locX="+locX+", locY="+locY+") is outside domain grid ("+numx+"x"+numy+"), skipping.")
+      continue
+   end if
+
    ;;; debug start ;;;
    if (debug.ne.0) then
       print(" ")
@@ -1243,7 +1249,7 @@ do ns=loopstart,loopend               ; for one loxY locX at a time.
 
    ; Pressure levels
 
-   maxp = max(press(:,:,locY,locX))/100 
+   maxp = max(press(:,:,locY,locX))/100
    minp = min(press(:,:ptop-1,locY,locX))/100
    startp = round(press(0,0,locY,locX)+.5,0)/100
 

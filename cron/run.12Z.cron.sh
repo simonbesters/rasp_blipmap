@@ -8,7 +8,9 @@ cd ..
 
 export offset=12;
 export uploadXblFiles="false";
-export areas="NL4KMGFS_1 NL1KMGFS_2"
+export areas="NL4KMGFS_1 NL4KMICON_1"
 
 . ./cron/runArea.sh
 runAreas
+./cron/update-symlinks.sh
+./cron/cleanup-results.sh

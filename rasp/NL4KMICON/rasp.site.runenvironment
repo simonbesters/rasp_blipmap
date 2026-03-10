@@ -3,6 +3,7 @@
 
 ulimit -s unlimited
 export KMP_STACKSIZE=1000000000
+export OMP_STACKSIZE=512M
 
 # Special Flag for PaulS "curr." even when REGIONXYZ+N
 export CURR_ONLY=1
