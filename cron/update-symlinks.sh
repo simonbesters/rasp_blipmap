@@ -1,10 +1,12 @@
-#!/bin/bash
+#\!/bin/bash
 # Update symlinks in RASPViewer to latest results for all 4 forecast systems
+# Also bridges data to the new /data/rasp/latest/ structure with manifest.json
 
 VIEWER_DIR="/root/RASPViewer"
 RESULTS_DIR="/tmp/results"
+RASP_BASE="/data/rasp"
 
-# 1. GFS WRF symlinks: NL+0 through NL+4
+# 1. GFS WRF symlinks: NL+0 through NL+4 (legacy)
 for day in 0 1 2 3 4; do
     latest=$(ls -dt "${RESULTS_DIR}/"*_NL4KMGFS_${day} 2>/dev/null | head -1)
     if [ -n "$latest" ] && [ -d "$latest/OUT" ]; then
@@ -13,7 +15,7 @@ for day in 0 1 2 3 4; do
     fi
 done
 
-# 2. ICON-EU WRF symlinks: NL+0-ICON through NL+4-ICON
+# 2. ICON-EU WRF symlinks: NL+0-ICON through NL+4-ICON (legacy)
 for day in 0 1 2 3 4; do
     latest=$(ls -dt "${RESULTS_DIR}/"*_NL4KMICON_${day} 2>/dev/null | head -1)
     if [ -n "$latest" ] && [ -d "$latest/OUT" ]; then
@@ -22,21 +24,50 @@ for day in 0 1 2 3 4; do
     fi
 done
 
-# 3. ICON-D2 NCL symlinks: NL+0-ICOND2NCL through NL+1-ICOND2NCL (max 48h forecast)
-#    Also matches old prefix NL2KMICOND2 for backwards compatibility
-for day in 0 1; do
-    latest=$(ls -dt "${RESULTS_DIR}/"*_NL2KMICOND2NCL_${day} "${RESULTS_DIR}/"*_NL2KMICOND2_${day} 2>/dev/null | head -1)
+# 3. ICON-D2 Python pipeline symlinks (legacy compat)
+latest_icond2=$(ls -dt "${RASP_BASE}/icon-d2/"????????T??Z 2>/dev/null | head -1)
+if [ -n "$latest_icond2" ]; then
+    for fdir in "$latest_icond2"/[0-9]*/; do
+        [ -d "$fdir" ] || continue
+        fdate=$(basename "$fdir")
+        # Compute day offset from today
+        today_epoch=$(date -d "$(date +%Y-%m-%d)" +%s)
+        fdate_epoch=$(date -d "${fdate:0:4}-${fdate:4:2}-${fdate:6:2}" +%s)
+        day_offset=$(( (fdate_epoch - today_epoch) / 86400 ))
+        if [ "$day_offset" -ge 0 ] && [ "$day_offset" -le 4 ]; then
+            ln -sfn "$fdir" "${VIEWER_DIR}/NL+${day_offset}-ICOND2PY"
+            echo "NL+${day_offset}-ICOND2PY -> $fdir"
+        fi
+    done
+fi
+
+# --- New structure: bridge to /data/rasp/latest/ ---
+
+# 4. GFS -> /data/rasp/latest/gfs/YYYYMMDD
+for day in 0 1 2 3 4; do
+    latest=$(ls -dt "${RESULTS_DIR}/"*_NL4KMGFS_${day} 2>/dev/null | head -1)
     if [ -n "$latest" ] && [ -d "$latest/OUT" ]; then
-        ln -sfn "$latest/OUT" "${VIEWER_DIR}/NL+${day}-ICOND2NCL"
-        echo "NL+${day}-ICOND2NCL -> $latest/OUT"
+        forecast_date=$(date -d "+${day} days" +%Y%m%d)
+        mkdir -p "${RASP_BASE}/latest/gfs"
+        ln -sfn "$latest/OUT" "${RASP_BASE}/latest/gfs/${forecast_date}"
     fi
 done
 
-# 4. ICON-D2 Pipeline symlinks: NL+0-ICOND2 through NL+1-ICOND2 (max 48h forecast)
-for day in 0 1; do
-    latest=$(ls -dt "${RESULTS_DIR}/"*_NL2KMICOND2_${day} 2>/dev/null | head -1)
+# 5. ICON-EU -> /data/rasp/latest/icon-eu/YYYYMMDD
+for day in 0 1 2 3 4; do
+    latest=$(ls -dt "${RESULTS_DIR}/"*_NL4KMICON_${day} 2>/dev/null | head -1)
     if [ -n "$latest" ] && [ -d "$latest/OUT" ]; then
-        ln -sfn "$latest/OUT" "${VIEWER_DIR}/NL+${day}-ICOND2"
-        echo "NL+${day}-ICOND2 -> $latest/OUT"
+        forecast_date=$(date -d "+${day} days" +%Y%m%d)
+        mkdir -p "${RASP_BASE}/latest/icon-eu"
+        ln -sfn "$latest/OUT" "${RASP_BASE}/latest/icon-eu/${forecast_date}"
     fi
 done
+
+# 6. ICON-D2 -> /data/rasp/latest/icon-d2/YYYYMMDD (via promote if data in /data/rasp/)
+#    Already handled by promote.sh, but ensure stale symlinks are cleaned
+if [ -d "${RASP_BASE}/latest/icon-d2" ]; then
+    find "${RASP_BASE}/latest/icon-d2" -type l \! -exec test -e {} \; -delete 2>/dev/null || true
+fi
+
+# 7. Rebuild manifest.json
+"${RASP_BASE}/scripts/update_manifest.sh"
