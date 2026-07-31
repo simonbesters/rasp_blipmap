@@ -100,6 +100,7 @@ RUN dnf update -y && dnf install -y \
   psmisc procps-ng pigz \
   sendmail procmail mailx \
   ImageMagick \
+  eccodes \
   perl-CPAN perl-JSON \
   python3 python3-gdal \
   openssh-clients rsync \

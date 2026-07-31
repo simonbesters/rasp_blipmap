@@ -93,3 +93,19 @@ for VARIABLE in "W_SO"; do
 		process https://opendata.dwd.de/weather/nwp/icon-eu/grib/"${INIT_HOUR}"/"${variable}"/icon-eu_europe_regular-lat-lon_soil-level_"${RUN_DATE}""${INIT_HOUR}"_"${FCST_HOUR}"_${LEVEL}_${VARIABLE}.grib2.bz2
 	done
 done
+
+# DWD switched ICON-EU opendata to CCSDS/AEC compression (GRIB2 data template
+# 5.42) around 2026-06-17. WPS ungrib's bundled g2lib cannot unpack that
+# (gf_getfld error 12 -> empty UNGRIB files -> metgrid "TT not found").
+# Repack the concatenated file to grid_simple so ungrib can read it again.
+logstdout "Repacking to grid_simple for WPS ungrib (DWD CCSDS since 2026-06-17)"
+if command -v grib_set >/dev/null 2>&1; then
+	if grib_set -r -s packingType=grid_simple "${outdir}/${targetfile}" "${outdir}/${targetfile}.simple" 2>> "${STDERRFILE}"; then
+		mv -f "${outdir}/${targetfile}.simple" "${outdir}/${targetfile}"
+	else
+		logprintout "WARNING: grib_set repack failed; leaving ${targetfile} as downloaded (ungrib will likely extract 0 fields)"
+		rm -f "${outdir}/${targetfile}.simple"
+	fi
+else
+	logprintout "WARNING: grib_set not found in image; ungrib cannot unpack CCSDS records"
+fi
